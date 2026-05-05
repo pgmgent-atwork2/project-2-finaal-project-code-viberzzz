@@ -1,15 +1,21 @@
 {
-  "name": "project-2-finaal-project-code-viberzzz",
+  "name": "project-2-finaal-project",
   "version": "1.0.0",
-  "description": "WIP\r (Briefing komt door klant – Gunther Van Nieuwenhuyze | Vrijdag 9/05 VOORMIDDAG)\r Klant: Technische dienst Filtratie Seapark\r Doelgroep: Afdeling Zoologie – Waterbehandeling LSS (Life Support Systems)",
-  "main": "index.js",
+  "description": "Full-stack Supabase project with auth and React frontend",
+  "private": true,
+  "workspaces": [
+    "services/frontend",
+    "services/backend",
+    "services/shared"
+  ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "npm run dev --workspaces",
+    "build": "npm run build --workspaces",
+    "start:frontend": "npm --workspace=services/frontend start",
+    "start:backend": "npm --workspace=services/backend start"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "express": "^5.2.1"
+  "devDependencies": {
+    "concurrently": "^9.2.1",
+    "nodemon": "^3.1.14"
   }
 }
