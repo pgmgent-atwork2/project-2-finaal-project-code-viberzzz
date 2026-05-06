@@ -4,15 +4,12 @@
   "description": "Full-stack Supabase project with auth and React frontend",
   "private": true,
   "workspaces": [
-    "services/frontend",
-    "services/backend",
-    "services/shared"
+    "services/frontend"
   ],
   "scripts": {
     "dev": "npm run dev --workspaces",
     "build": "npm run build --workspaces",
-    "start:frontend": "npm --workspace=services/frontend start",
-    "start:backend": "npm --workspace=services/backend start"
+    "start:frontend": "npm --workspace=services/frontend start"
   },
   "devDependencies": {
     "concurrently": "^9.2.1",
