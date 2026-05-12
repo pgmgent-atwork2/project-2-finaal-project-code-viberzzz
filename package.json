@@ -3,13 +3,10 @@
   "version": "1.0.0",
   "description": "Full-stack Supabase project with auth and React frontend",
   "private": true,
-  "workspaces": [
-    "services/frontend"
-  ],
   "scripts": {
-    "dev": "npm run dev --workspaces",
-    "build": "npm run build --workspaces",
-    "start:frontend": "npm --workspace=services/frontend start"
+    "dev": "cd full-stack && npm start",
+    "start": "cd full-stack && npm start",
+    "build": "cd full-stack && npm run build"
   },
   "devDependencies": {
     "concurrently": "^9.2.1",
