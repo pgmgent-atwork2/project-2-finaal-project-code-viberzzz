@@ -1,6 +1,6 @@
 import { useAuth } from '../context/auth';
 import { useState, useEffect } from 'react';
-import { getFiltratieUnits  } from '../api/filtratie_unit/api.filtratie_unit';
+import { getFiltratieUnits  } from '../api/filtratie_unit/api.filtratie_unit.ts';
 
 const Home = () => {
   const { auth } = useAuth();
