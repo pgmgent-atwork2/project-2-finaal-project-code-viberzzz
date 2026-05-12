@@ -14,6 +14,7 @@ const Home = () => {
       console.error('Error fetching filtratie units:', error);
     }
   };
+  
 
   useEffect(() => {
     fetchFiltratieUnits();
