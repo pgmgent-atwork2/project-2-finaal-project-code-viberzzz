@@ -15,12 +15,11 @@ export default function LogForm() {
       {
         ph: parseFloat(ph),
         temperature: parseFloat(temperature),
-        note: note
+        note
       }
     ])
 
     if (error) {
-      console.log(error)
       setStatus('error')
     } else {
       setStatus('success')
