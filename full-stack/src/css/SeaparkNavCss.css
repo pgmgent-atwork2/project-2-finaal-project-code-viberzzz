@@ -1,0 +1,143 @@
+
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap');
+
+.sp-nav {
+    font-family: 'DM Sans', sans-serif;
+    width: 220px;
+    height: 100vh;
+    background: #f0f8f9;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid #daeef1;
+    position: relative;
+}
+
+.sp-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 20px 16px 18px;
+    border-bottom: 1px solid #daeef1;
+}
+
+.sp-brand-icon {
+    width: 36px;
+    height: 36px;
+    background: #0ea5b5;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.sp-brand-icon svg {
+    color: white;
+}
+
+.sp-brand-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.sp-brand-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: #0f3d45;
+    line-height: 1.2;
+}
+
+.sp-brand-sub {
+    font-size: 11px;
+    color: #6b9ea8;
+    font-weight: 400;
+    margin-top: 1px;
+}
+
+.sp-nav-list {
+    flex: 1;
+    padding: 12px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.sp-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    color: #4a7a85;
+    font-size: 13.5px;
+    font-weight: 500;
+    transition: background 0.15s ease, color 0.15s ease;
+    user-select: none;
+    border: none;
+    background: transparent;
+    width: 100%;
+    text-align: left;
+}
+
+.sp-nav-item:hover {
+    background: #d8eff3;
+    color: #0e6b7a;
+}
+
+.sp-nav-item.active {
+    background: #cce9ed;
+    color: #0b5966;
+    font-weight: 600;
+}
+
+.sp-nav-item.active svg {
+    color: #0ea5b5;
+}
+
+.sp-nav-item svg {
+    flex-shrink: 0;
+    transition: color 0.15s ease;
+}
+
+.sp-footer {
+    padding: 14px 16px;
+    border-top: 1px solid #daeef1;
+}
+
+.sp-user {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 10px;
+}
+
+.sp-user-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: #0f3d45;
+}
+
+.sp-user-role {
+    font-size: 11px;
+    color: #6b9ea8;
+    margin-top: 1px;
+}
+
+.sp-signout {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #6b9ea8;
+    font-size: 12.5px;
+    font-family: inherit;
+    font-weight: 500;
+    padding: 4px 0;
+    transition: color 0.15s ease;
+}
+
+.sp-signout:hover {
+    color: #0b5966;
+}
