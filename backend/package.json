@@ -1,0 +1,16 @@
+{
+  "name": "project-2-finaal-project-code-viberzzz",
+  "version": "1.0.0",
+  "description": "WIP\r (Briefing komt door klant – Gunther Van Nieuwenhuyze | Vrijdag 9/05 VOORMIDDAG)\r Klant: Technische dienst Filtratie Seapark\r Doelgroep: Afdeling Zoologie – Waterbehandeling LSS (Life Support Systems)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.105.3",
+    "express": "^5.2.1"
+  }
+}
