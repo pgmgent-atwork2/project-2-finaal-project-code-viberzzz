@@ -1,8 +1,15 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/auth";
+import { registerUser, login } from "../api/authApi";
+
 import "../css/reset.css";
 import "../css/styleLogin.css";
 
 const Login = () => {
+  const navigate = useNavigate();
+  // const { login, registerUser } = useAuth();
+  
   const [isSignUp, setIsSignUp] = useState(false);
 
   const [email, setEmail] = useState("");
@@ -11,8 +18,9 @@ const Login = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
 
   const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     let newErrors = {};
@@ -38,14 +46,22 @@ const Login = () => {
     setErrors(newErrors);
 
     if (Object.keys(newErrors).length === 0) {
-      if (!isSignUp) {
-        if (email === "test@seapark.com" && password === "test") {
-          alert("Login completed 👋");
+      setLoading(true);
+      try {
+        if (!isSignUp) {
+          // Sign in logic
+          await login({ email, password });
+          navigate("/");
         } else {
-          setErrors({ general: "Wrong login." });
+          // Sign up logic
+          await registerUser({ email, password, name: username });
+          navigate("/");
         }
-      } else {
-        alert("New profile made 🎉");
+      } catch (error) {
+        console.error("Authentication failed:", error);
+        setErrors({ general: error.message || "Authentication failed. Please try again." });
+      } finally {
+        setLoading(false);
       }
     }
   };
@@ -95,7 +111,10 @@ const Login = () => {
             <button
               type="button"
               className={`tab ${!isSignUp ? "active" : ""}`}
-              onClick={() => setIsSignUp(false)}
+              onClick={() => {
+                setIsSignUp(false);
+                setErrors({});
+              }}
             >
               Sign in
             </button>
@@ -103,7 +122,10 @@ const Login = () => {
             <button
               type="button"
               className={`tab ${isSignUp ? "active" : ""}`}
-              onClick={() => setIsSignUp(true)}
+              onClick={() => {
+                setIsSignUp(true);
+                setErrors({});
+              }}
             >
               Create account
             </button>
@@ -161,8 +183,8 @@ const Login = () => {
 
             <span className="error">{errors.general}</span>
 
-            <button type="submit" className="primary-btn">
-              {isSignUp ? "Create account" : "Sign in"}
+            <button type="submit" className="primary-btn" disabled={loading}>
+              {loading ? "Loading..." : isSignUp ? "Create account" : "Sign in"}
             </button>
 
           </form>
