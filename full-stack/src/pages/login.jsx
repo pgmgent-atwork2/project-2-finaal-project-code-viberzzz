@@ -1,14 +1,23 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/auth";
-import { registerUser, login } from "../api/authApi";
+import { logout, registerUser } from "../api/authApi";
 
 import "../css/reset.css";
 import "../css/styleLogin.css";
+import { useEffect } from "react";
 
 const Login = () => {
+  // Use login from auth context
   const navigate = useNavigate();
-  // const { login, registerUser } = useAuth();
+  const { login, isInitialized, isLoggedIn } = useAuth();
+  
+  // Redirect to home if already logged in
+  useEffect(() => {
+    if (isLoggedIn) { 
+      logout();
+    }
+  }, []);
   
   const [isSignUp, setIsSignUp] = useState(false);
 
@@ -50,6 +59,7 @@ const Login = () => {
       try {
         if (!isSignUp) {
           // Sign in logic
+          
           await login({ email, password });
           navigate("/");
         } else {

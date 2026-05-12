@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { getFiltratieUnits  } from '../api/filtratie_unit/api.filtratie_unit.ts';
 
 const Home = () => {
+  const [user, setuser] = useState(null);
   const { auth } = useAuth();
   const [filtratieUnits, setFiltratieUnits] = useState([]);
 
@@ -18,7 +19,8 @@ const Home = () => {
 
   useEffect(() => {
     fetchFiltratieUnits();
-  }, []);
+    setuser(auth?.user);
+  }, [auth]);
 
   return (
     <div style={{ padding: '40px' }}>
