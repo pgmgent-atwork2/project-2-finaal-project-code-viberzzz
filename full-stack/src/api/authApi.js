@@ -7,7 +7,7 @@ export const registerUser = async (user) => {
         password,
         options: {
             data: {
-                name,
+                naam: name,
             },
         },
     });

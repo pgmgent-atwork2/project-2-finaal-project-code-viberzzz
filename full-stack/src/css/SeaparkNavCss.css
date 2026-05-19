@@ -78,6 +78,7 @@
     background: transparent;
     width: 100%;
     text-align: left;
+    text-decoration: none;
 }
 
 .sp-nav-item:hover {

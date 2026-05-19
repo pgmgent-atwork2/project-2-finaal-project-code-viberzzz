@@ -2,6 +2,10 @@ import { Link, useLocation } from "react-router-dom";
 import SeaparkNavCss from "../css/SeaparkNavCss.css";
 import { logout } from "../api/authApi";
 
+import { useAuth } from "../context/auth";
+import { useEffect, useState } from "react";
+
+
 
 const navItems = [
   {
@@ -68,6 +72,15 @@ const SignOutIcon = () => (
 );
 
 export default function SeaparkNav() {
+
+
+  const [user, setuser] = useState(null);
+  const { auth } = useAuth();
+
+  useEffect(() => {
+    setuser(auth?.user);
+  }, [auth]);
+
   const location = useLocation();
 
   return (
@@ -105,8 +118,8 @@ export default function SeaparkNav() {
         {/* Footer */}
         <div className="sp-footer">
           <div className="sp-user">
-            <span className="sp-user-name">Chris Brown</span>
-            <span className="sp-user-role">Technician</span>
+            <span className="sp-user-name">{user?.naam || "User"}</span>
+            <span className="sp-user-role">{user?.rol || ""}</span>
           </div>
           <button className="sp-signout" onClick={() => logout()}>
             <SignOutIcon />
