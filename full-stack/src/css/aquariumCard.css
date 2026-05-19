@@ -1,0 +1,367 @@
+/* ─── Animations ─────────────────────────────────────────────────────────── */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
+}
+
+/* ─── Main Container ─────────────────────────────────────────────────────────── */
+.aquarium-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 20px 22px;
+  font-family: 'Geist', 'DM Sans', system-ui, sans-serif;
+  max-width: 780px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+
+/* ─── Header ───────────────────────────────────────────────────────────────── */
+.aquarium-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+
+.aquarium-title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.aquarium-info {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 5px;
+  flex-wrap: wrap;
+}
+
+/* ─── Location Badge ───────────────────────────────────────────────────────── */
+.location-section {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  color: #475569;
+}
+
+.location-badge {
+  background: #7c3aed;
+  color: #fff;
+  border-radius: 4px;
+  padding: 1px 7px;
+  font-weight: 600;
+  font-size: 12px;
+}
+
+/* ─── Inspection Info ──────────────────────────────────────────────────────── */
+.inspection-info {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+/* ─── Status Badge ─────────────────────────────────────────────────────────── */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 20px;
+  padding: 3px 10px;
+}
+
+.status-badge.active {
+  color: #22c55e;
+  background: #22c55e18;
+  border: 1px solid #22c55e44;
+}
+
+.status-badge.warning {
+  color: #f59e0b;
+  background: #f59e0b18;
+  border: 1px solid #f59e0b44;
+}
+
+.status-badge.inactive {
+  color: #94a3b8;
+  background: #94a3b818;
+  border: 1px solid #94a3b844;
+}
+
+.status-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px;
+}
+
+.status-badge.active .status-dot {
+  background: #22c55e;
+  box-shadow: 0 0 0 2px #22c55e44;
+  animation: pulse 2s infinite;
+}
+
+.status-badge.warning .status-dot {
+  background: #f59e0b;
+  box-shadow: 0 0 0 2px #f59e0b44;
+}
+
+.status-badge.inactive .status-dot {
+  background: #94a3b8;
+  box-shadow: 0 0 0 2px #94a3b844;
+}
+
+/* ─── Parameter Cards ──────────────────────────────────────────────────────── */
+.param-cards-container {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.param-card {
+  flex: 1 1 140px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 14px 16px;
+  min-width: 0;
+}
+
+.param-label {
+  font-size: 12px;
+  color: #64748b;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+.param-value {
+  font-size: 22px;
+  font-weight: 700;
+  margin-top: 4px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.5px;
+}
+
+.param-value.ok {
+  color: inherit;
+}
+
+.param-value.warning {
+  color: #b45309;
+}
+
+.param-value.danger {
+  color: #dc2626;
+}
+
+.param-unit {
+  font-size: 14px;
+  font-weight: 500;
+  margin-left: 2px;
+}
+
+.param-gauge {
+  margin-top: 8px;
+  position: relative;
+}
+
+.gauge-track {
+  height: 3px;
+  border-radius: 99px;
+  background: #e2e8f0;
+  overflow: hidden;
+}
+
+.gauge-fill {
+  height: 100%;
+  border-radius: 99px;
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.gauge-fill.ok {
+  background: #22c55e;
+}
+
+.gauge-fill.warning {
+  background: #f59e0b;
+}
+
+.gauge-fill.danger {
+  background: #ef4444;
+}
+
+.param-range {
+  font-size: 11px;
+  color: #94a3b8;
+  margin-top: 5px;
+}
+
+/* ─── Footer Actions ───────────────────────────────────────────────────────── */
+.card-footer {
+  margin-top: 16px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.btn-log-entry {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #0891b2;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 9px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.btn-log-entry:hover {
+  background: #0e7490;
+}
+
+/* ─── Modal Overlay ────────────────────────────────────────────────────────── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ─── Modal ────────────────────────────────────────────────────────────────── */
+.modal {
+  background: #fff;
+  border-radius: 16px;
+  padding: 28px 28px 24px;
+  width: 100%;
+  max-width: 420px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.modal-title {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.modal-close-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 20px;
+  color: #94a3b8;
+  line-height: 1;
+}
+
+/* ─── Modal Form ───────────────────────────────────────────────────────────── */
+.modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.form-label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.form-label-text {
+  font-size: 12px;
+  font-weight: 600;
+  color: #475569;
+}
+
+.form-label-hint {
+  color: #94a3b8;
+  font-weight: 400;
+}
+
+.form-input,
+.form-textarea {
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-size: 14px;
+  outline: none;
+  background: #f8fafc;
+  color: #0f172a;
+  transition: border-color 0.15s;
+  font-family: inherit;
+}
+
+.form-input:focus,
+.form-textarea:focus {
+  border-color: #0891b2;
+}
+
+.form-textarea {
+  resize: vertical;
+}
+
+/* ─── Modal Actions ────────────────────────────────────────────────────────── */
+.modal-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.btn-cancel {
+  flex: 1;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  color: #64748b;
+  transition: background 0.15s;
+}
+
+.btn-cancel:hover {
+  background: #eef2f5;
+}
+
+.btn-submit {
+  flex: 2;
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  background: #0891b2;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  transition: background 0.15s;
+}
+
+.btn-submit:hover {
+  background: #0e7490;
+}
