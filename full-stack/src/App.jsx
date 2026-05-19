@@ -6,6 +6,7 @@ import Login from './pages/login';
 import Home from './pages/Home';
 import Home2 from './pages/Home2';
 import Home3 from './pages/Home3';
+import AquariumDashboard from './pages/AquariumDashboard';
 import './App.css';
 
 function App() {
@@ -23,7 +24,7 @@ function App() {
             element={
               <ProtectedRoute>
                 <Layout>
-                  <Home />
+                  <AquariumDashboard />
                 </Layout>
               </ProtectedRoute>
             }
@@ -34,7 +35,7 @@ function App() {
             element={
               <ProtectedRoute>
                 <Layout>
-                  <Home2 />
+                  <Home />
                 </Layout>
               </ProtectedRoute>
             }
