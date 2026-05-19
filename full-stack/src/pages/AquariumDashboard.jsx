@@ -1,103 +1,12 @@
 import { useState, useEffect } from "react";
 import { getFiltratieUnits } from "../api/filtratie_unit/api.filtratie_unit.ts";
-import "../css/dashboard.css";
 import { useAuth } from "../context/auth";
+import StatCard from "../components/dashboard/StatCard";
+import StatusBadge from "../components/dashboard/StatusBadge";
+import UnitCard from "../components/dashboard/UnitCard";
+import LogModal from "../components/dashboard/LogModal";
+import "../css/dashboard.css";
 
-
-const STATUS_META = {
-  Active:      { color: "#16a34a", bg: "#dcfce7", dot: "#22c55e" },
-  Malfunction: { color: "#dc2626", bg: "#fee2e2", dot: "#ef4444" },
-  Maintenance: { color: "#d97706", bg: "#fef3c7", dot: "#f59e0b" },
-};
-// ──────────────────────────────────────────────────────────────────────────
-
-
-// ── Sub-components ─────────────────────────────────────────────────────────
-
-function StatCard({ icon, value, label }) {
-  return (
-    <> 
-    <div className="stat-card">
-      <div className="stat-icon">{icon}</div>
-      <div>
-        <div className="stat-value">{value}</div>
-        <div className="stat-label">{label}</div>
-      </div>
-    </div>
-    </>
-  );
-}
-
-function StatusBadge({ status }) {
-  const meta = STATUS_META[status] ?? STATUS_META.Active;
-  return (
-    <>   
-      <span
-        className="status-badge"
-        style={{ background: meta.bg, color: meta.color }}
-      >
-        <span className="status-dot" style={{ background: meta.dot }} />
-        {status}
-      </span>
-    </>
-  );
-}
-
-function UnitCard({ unit, onClick }) {
-  return (
-    <>
-    <div className="unit-card" onClick={() => onClick(unit)}>
-      <div className="unit-card-top">
-        <span className="unit-name" style={{ marginRight: "1rem" }}>{unit.naam}</span>
-        <StatusBadge status={unit.status} />
-      </div>
-      <div className="unit-location">{unit.locatie}</div>
-      <div className="unit-inspection">Last inspection: {unit.latestWaarde?.gemeten_op ? new Date(unit.latestWaarde.gemeten_op).toLocaleString('nl-NL', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false }) : 'N/A'}</div>
-    </div>
-    </>
-  );
-}
-
-function LogModal({ units, onClose, onSave }) {
-  const [unitId, setUnitId]   = useState(units[0]?.id ?? "");
-  const [notes, setNotes]     = useState("");
-
-  function handleSave() {
-    const unit = units.find(u => u.id === Number(unitId));
-    onSave({ unit, notes, timestamp: new Date().toLocaleString() });
-    onClose();
-  }
-
-  return (
-    <>
-    <div className="modal-overlay" onClick={e => e.target === e.currentTarget && onClose()}>
-      <div className="modal">
-        <h3>Log Entry</h3>
-        <p>Record a new inspection or maintenance note.</p>
-
-        <label>Filtration unit</label>
-        <select value={unitId} onChange={e => setUnitId(e.target.value)}>
-          {units.map(u => (
-            <option key={u.id} value={u.id}>{u.naam}</option>
-          ))}
-        </select>
-
-        <label>Notes</label>
-        <textarea
-          value={notes}
-          onChange={e => setNotes(e.target.value)}
-          placeholder="Describe what was checked or done…"
-        />
-
-        <div className="modal-actions">
-          <button className="btn-cancel" onClick={onClose}>Cancel</button>
-          <button className="btn-save"   onClick={handleSave}>Save log</button>
-        </div>
-      </div>
-    </div>
-    </>
-  );
-}
 
 // ── Main dashboard ─────────────────────────────────────────────────────────
 
@@ -174,9 +83,6 @@ export default function AquariumDashboard() {
     ]);
   }, [units]);
 
-  const hour = new Date().getHours();
-  const greeting =
-    hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";
 
   // Helper function to check if a value is in range
   const isValueInRange = (value, min, max) => {
@@ -197,7 +103,7 @@ export default function AquariumDashboard() {
         {/* ── Top bar ── */}
         <div className="topbar">
           <div className="greeting">
-            <h1>{greeting}, {user?.naam}</h1>
+            <h1>Welcome, {user?.naam}</h1>
             <p>Here's the state of the park's life support today.</p>
           </div>
           <button className="btn-log" onClick={() => setShowModal(true)}>
