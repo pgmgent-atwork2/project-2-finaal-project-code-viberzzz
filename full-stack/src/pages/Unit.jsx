@@ -22,7 +22,7 @@ const Home = () => {
   useEffect(() => {
     fetchFiltratieUnits();
     setuser(auth?.user);
-  }, [auth]);
+  }, []);
 
   return (
     <>

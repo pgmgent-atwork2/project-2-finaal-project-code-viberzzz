@@ -36,21 +36,6 @@ function getParamStatus(value, min, max) {
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
-function StatusBadge({ status }) {
-  const map = {
-    active:   { label: "Active",   color: "#22c55e" },
-    warning:  { label: "Warning",  color: "#f59e0b" },
-    inactive: { label: "Inactive", color: "#94a3b8" },
-  };
-  const { label } = map[status] ?? map.inactive;
-  return (
-    <span className={`status-badge ${status}`}>
-      <span className="status-dot" />
-      {label}
-    </span>
-  );
-}
-
 function ParamCard({ label, value, unit, min, max, decimals }) {
   const status = getParamStatus(value, min, max);
 
@@ -61,7 +46,7 @@ function ParamCard({ label, value, unit, min, max, decimals }) {
         {value.toFixed(decimals)}
         <span className="param-unit">{unit}</span>
       </div>
-      <div className="param-range">target {min}–{max}</div>
+      <div className={`param-range ${status === "ok" ? "in-range" : ""}`}>target {min}–{max}</div>
     </div>
   );
 }
@@ -221,7 +206,6 @@ export default function AquariumCard({ onLogSubmit }) {
               </span>
             </div>
           </div>
-          <StatusBadge status={tank.status} />
         </div>
 
         {/* Parameter cards */}

@@ -154,11 +154,11 @@
 }
 
 .param-value.ok {
-  color: inherit;
+  color: black;
 }
 
 .param-value.warning {
-  color: #b45309;
+  color: black;
 }
 
 .param-value.danger {
@@ -205,6 +205,10 @@
   font-size: 11px;
   color: #94a3b8;
   margin-top: 5px;
+}
+
+.param-range.in-range {
+  color: #000000;
 }
 
 /* ─── Footer Actions ───────────────────────────────────────────────────────── */
