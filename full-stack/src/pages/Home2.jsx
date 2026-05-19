@@ -19,18 +19,14 @@ const Home = () => {
 
   useEffect(() => {
     fetchFiltratieUnits();
-    setuser(auth?.user);
   }, [auth]);
 
   return (
     <div style={{ padding: '40px' }}>
-      <h1>Welcome to Dashboard</h1>
-      {auth && (
-        <div>
-          <p>Logged in as: {auth.user.email}</p>
-          <p>User ID: {auth.user.id}</p>
-        </div>
-      )}
+      <h1>filtration Units</h1>
+      <form>
+        <input type="text" placeholder="Search filtratie units..." />
+      </form>
       <div>
         <h2>Filtratie Units</h2>
         {filtratieUnits && filtratieUnits.length > 0 ? (
