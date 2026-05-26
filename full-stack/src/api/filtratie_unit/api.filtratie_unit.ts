@@ -25,11 +25,28 @@ export const getFiltratieUnits = async (): Promise<{}> => {
   return data;
 };
 
-export const getFiltratieUnitById = async (id: string): Promise<FiltratieUnit | null> => {
-  const { data, error } = await API.from("filtratie_unit").select("*, waarden_range (id, ph_min, ph_max, temperatuur_min, temperatuur_max, water_level_min, water_level_max, zoutgehalte_min, zoutgehalte_max, microbiologie_max) ").eq("id", id).single();
-  if (error) {
-    console.error("Error fetching filtratie unit:", error);
+export const getFiltratieUnitById = async (id: string): Promise<any> => {
+  const [
+    { data: unit, error: e1 },
+    { data: waarden, error: e2 }
+  ] = await Promise.all([
+    API.from("filtratie_unit")
+      .select("*, waarden_range(*)")
+      .eq("id", id)
+      .single(),
+    API.from("filtratie_waarden")
+      .select("*")
+      .eq("unit_id", id)
+      .order("gemeten_op", { ascending: false })
+  ]);
+
+  if (e1 || e2) {
+    console.error("Error fetching filtratie unit:", e1, e2);
     return null;
   }
-  return data;
+
+  return {
+    ...unit,
+    filtratie_waarden: waarden || []
+  };
 };

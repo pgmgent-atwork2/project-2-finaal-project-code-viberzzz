@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { getFiltratieUnits } from "../api/filtratie_unit/api.filtratie_unit.ts";
 import { useAuth } from "../context/auth";
+import { useUnitStatus } from "../hooks/useUnitStatus";
 import StatCard from "../components/dashboard/StatCard";
 import StatusBadge from "../components/dashboard/StatusBadge";
 import UnitCard from "../components/dashboard/UnitCard";
@@ -11,8 +13,10 @@ import "../css/dashboard.css";
 // ── Main dashboard ─────────────────────────────────────────────────────────
 
 export default function AquariumDashboard() {
+  const navigate = useNavigate();
   const [user, setuser] = useState(null);
   const { auth } = useAuth();
+  const { getUnitStatus, isValueInRange, isValueExceedsMax } = useUnitStatus();
 
   const [units, setUnits] = useState([]);
   const [stats, setStats] = useState([
@@ -33,43 +37,6 @@ export default function AquariumDashboard() {
     };
     fetchData();
   });
-
-  // Calculate status and stats
-  const getUnitStatus = (unit) => {
-    let status = "Active";
-
-    if (!unit.latestWaarde) {
-      status = "Malfunction";
-    } else if (unit.waarden_range) {
-      const waarde = unit.latestWaarde;
-      const range = Array.isArray(unit.waarden_range)
-        ? unit.waarden_range[0]
-        : unit.waarden_range;
-
-      if (range) {
-        const isInRange =
-          (!waarde.ph ||
-            (waarde.ph >= range.ph_min && waarde.ph <= range.ph_max)) &&
-          (!waarde.temperatuur ||
-            (waarde.temperatuur >= range.temperatuur_min &&
-              waarde.temperatuur <= range.temperatuur_max)) &&
-          (!waarde.water_level ||
-            (waarde.water_level >= range.water_level_min &&
-              waarde.water_level <= range.water_level_max)) &&
-          (!waarde.zoutgehalte ||
-            (waarde.zoutgehalte >= range.zoutgehalte_min &&
-              waarde.zoutgehalte <= range.zoutgehalte_max)) &&
-          (!waarde.microbiologie ||
-            waarde.microbiologie <= range.microbiologie_max);
-
-        if (!isInRange) {
-          status = "Maintenance";
-        }
-      }
-    }
-
-    return status;
-  };
 
   // Update stats when units change
   useEffect(() => {
@@ -94,18 +61,6 @@ export default function AquariumDashboard() {
       { label: "Logs today", value: logsToday, icon: "📋" },
     ]);
   }, [units]);
-
-  // Helper function to check if a value is in range
-  const isValueInRange = (value, min, max) => {
-    if (value === null || value === undefined) return true;
-    return value >= min && value <= max;
-  };
-
-  // Helper function to check if a value exceeds max
-  const isValueExceedsMax = (value, max) => {
-    if (value === null || value === undefined) return false;
-    return value > max;
-  };
 
   return (
     <>
@@ -318,12 +273,8 @@ export default function AquariumDashboard() {
             )}
 
             <div className="modal-actions" style={{ marginTop: 20 }}>
-              <button
-                className="btn-cancel"
-                onClick={() => setSelectedUnit(null)}
-              >
-                Close
-              </button>
+              <button className="btn-save" onClick={() => navigate(`/units/${selectedUnit.id}`)}>View Details</button>
+              <button className="btn-cancel" onClick={() => setSelectedUnit(null)}>Close</button>
             </div>
           </div>
         </div>
