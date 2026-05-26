@@ -32,7 +32,7 @@ export default function AquariumDashboard() {
       setuser(auth.user);
     };
     fetchData();
-  }, []);
+  });
 
   // Calculate status and stats
   const getUnitStatus = (unit) => {
