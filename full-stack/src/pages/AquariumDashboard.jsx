@@ -60,7 +60,7 @@ export default function AquariumDashboard() {
       { label: "Need attention", value: needAttentionCount, icon: "⚠️" },
       { label: "Logs today", value: logsToday, icon: "📋" },
     ]);
-  }, [units]);
+  }, [units, getUnitStatus]);
 
   return (
     <>
@@ -273,8 +273,18 @@ export default function AquariumDashboard() {
             )}
 
             <div className="modal-actions" style={{ marginTop: 20 }}>
-              <button className="btn-save" onClick={() => navigate(`/units/${selectedUnit.id}`)}>View Details</button>
-              <button className="btn-cancel" onClick={() => setSelectedUnit(null)}>Close</button>
+              <button
+                className="btn-save"
+                onClick={() => navigate(`/units/${selectedUnit.id}`)}
+              >
+                View Details
+              </button>
+              <button
+                className="btn-cancel"
+                onClick={() => setSelectedUnit(null)}
+              >
+                Close
+              </button>
             </div>
           </div>
         </div>
