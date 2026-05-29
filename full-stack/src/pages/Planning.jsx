@@ -1,4 +1,5 @@
 import Calendar from "../components/Planning/Calendar";
+import UpcomingMaintenance from "../components/Planning/UpcomingMaintenance";
 import "../css/Planning.css";
 
 const Planning = () => {
@@ -69,6 +70,8 @@ const Planning = () => {
         </fieldset>
       </section>
       <Calendar />
+
+      <UpcomingMaintenance />
     </main>
   );
 };

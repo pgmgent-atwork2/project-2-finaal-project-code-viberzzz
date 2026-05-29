@@ -1,0 +1,42 @@
+.upcoming-maintenance {
+  background: white;
+  border: 1px solid #dbe3ea;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-top: 2rem;
+}
+
+.maintenance-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.maintenance-count {
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  background: #f1f5f9;
+}
+
+.maintenance-item {
+  margin-top: 1rem;
+  padding: 1rem;
+  border: 1px solid #dbe3ea;
+  border-radius: 10px;
+}
+
+.maintenance-item h4 {
+  margin-bottom: 0.25rem;
+}
+
+.maintenance-item p {
+  margin-bottom: 0.75rem;
+}
+
+.maintenance-meta {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.875rem;
+}
