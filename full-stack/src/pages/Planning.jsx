@@ -1,44 +1,78 @@
-import { useAuth } from "../context/auth/index.jsx";
-import { useState, useEffect } from "react";
-import { getFiltratieUnits } from "../api/filtratie_unit/api.filtratie_unit.ts";
+import "../css/Planning.css";
 
-const Home = () => {
-  const { auth } = useAuth();
-  const [filtratieUnits, setFiltratieUnits] = useState([]);
-
-  const fetchFiltratieUnits = async () => {
-    try {
-      const data = await getFiltratieUnits();
-      setFiltratieUnits(data);
-    } catch (error) {
-      console.error("Error fetching filtration units:", error);
-    }
-  };
-
-  useEffect(() => {
-    fetchFiltratieUnits();
-  }, [auth]);
-
+const Planning = () => {
   return (
-    <div style={{ padding: "40px" }}>
-      <h1>filtration Units</h1>
-      <form>
-        <input type="text" placeholder="Search filtratie units..." />
-      </form>
-      <div>
-        <h2>Filtratie Units</h2>
-        {filtratieUnits && filtratieUnits.length > 0 ? (
-          <ul>
-            {filtratieUnits.map((unit) => (
-              <li key={unit.id}>{unit.naam}</li>
-            ))}
-          </ul>
-        ) : (
-          <p>No filtratie units found</p>
-        )}
+    <main className="planning-page">
+      <header>
+        <h1>Maintenance Planning</h1>
+        <p>
+          Schedule, dispatch and track maintenance for all filtration
+          installations.
+        </p>
+      </header>
+
+      <section aria-label="Task statistics">
+        <ul className="stats-grid">
+          <li className="stat-card">
+            <span className="stat-value">9</span>
+            <span className="stat-label">Total Tasks</span>
+          </li>
+          <li className="stat-card">
+            <span className="stat-value">3</span>
+            <span className="stat-label">Pending</span>
+          </li>
+          <li className="stat-card">
+            <span className="stat-value">2</span>
+            <span className="stat-label">Urgent</span>
+          </li>
+          <li className="stat-card">
+            <span className="stat-value">2</span>
+            <span className="stat-label">Completed</span>
+          </li>
+        </ul>
+      </section>
+
+      <section className="search-container">
+        <label htmlFor="task-search" className="sr-only">
+          Search tasks
+        </label>
+        <input
+          type="search"
+          id="task-search"
+          placeholder="Search task, unit or technician..."
+          className="search-input"
+        />
+        <fieldset className="filters-row">
+          <legend className="sr-only">Filter tasks</legend>
+
+          <label htmlFor="filter-technician" className="sr-only">
+            Technician
+          </label>
+          <select id="filter-technician">
+            <option>All technicians</option>
+          </select>
+
+          <label htmlFor="filter-installation" className="sr-only">
+            Installation
+          </label>
+          <select id="filter-installation">
+            <option>All installations</option>
+          </select>
+
+          <label htmlFor="filter-status" className="sr-only">
+            Status
+          </label>
+          <select id="filter-status">
+            <option>All statuses</option>
+          </select>
+        </fieldset>
+      </section>
+
+      <div className="calendar-container">
+        <h2>Week View</h2>
       </div>
-    </div>
+    </main>
   );
 };
 
-export default Home;
+export default Planning;
