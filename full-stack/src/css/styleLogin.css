@@ -1,111 +1,105 @@
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    font-family: 'Inter', sans-serif;
-}
-.box{
-    display: flex;
-    height: 100vh;
+.box {
+  display: flex;
+  height: 100vh;
 }
 body {
-    height: 100vh;
-    background: #ffffff;
+  height: 100vh;
+  background: #ffffff;
 }
 
 .container {
-    display: flex;
-    height: 100vh;
+  display: flex;
+  height: 100vh;
 }
 
 .left {
-    width: 50%;
-    background: #00a6b6;
-    color: #ffffff;
-    padding: 40px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+  width: 50%;
+  background: #00a6b6;
+  color: #ffffff;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .brand {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
 }
 
 .waves {
-    font-size: 18px;
+  font-size: 18px;
 }
 
 .hero-text {
-    max-width: 420px;
+  max-width: 420px;
 }
 
 .hero-text h1 {
-    font-size: 36px;
-    font-weight: 700;
-    margin-bottom: 16px;
+  font-size: 36px;
+  font-weight: 700;
+  margin-bottom: 16px;
 }
 
 .hero-text p {
-    font-size: 14px;
-    line-height: 1.6;
-    opacity: 0.95;
+  font-size: 14px;
+  line-height: 1.6;
+  opacity: 0.95;
 }
 
 .footer {
-    font-size: 12px;
-    opacity: 0.9;
+  font-size: 12px;
+  opacity: 0.9;
 }
 
 .right {
-    width: 50%;
-    background: #f7fbfc;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  width: 50%;
+  background: #f7fbfc;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .login-box {
-    width: 360px;
+  width: 360px;
 }
 
 .login-box h2 {
-    font-size: 22px;
-    font-weight: 700;
-    margin-bottom: 6px;
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 6px;
 }
 
 .subtitle {
-    font-size: 13px;
-    color: #5f7d86;
-    margin-bottom: 20px;
+  font-size: 13px;
+  color: #5f7d86;
+  margin-bottom: 20px;
 }
 
 .tabs {
-    background: #e9f1f3;
-    border-radius: 999px;
-    padding: 4px;
-    display: flex;
-    margin-bottom: 20px;
+  background: #e9f1f3;
+  border-radius: 999px;
+  padding: 4px;
+  display: flex;
+  margin-bottom: 20px;
 }
 
 .tab {
-    flex: 1;
-    border: none;
-    background: transparent;
-    padding: 8px;
-    font-size: 13px;
-    cursor: pointer;
-    border-radius: 999px;
-    color: #3d5c66;
+  flex: 1;
+  border: none;
+  background: transparent;
+  padding: 8px;
+  font-size: 13px;
+  cursor: pointer;
+  border-radius: 999px;
+  color: #3d5c66;
 }
 
 .tab.active {
-    background: #ffffff;
-    font-weight: 600;
+  background: #ffffff;
+  font-weight: 600;
 }
 
 /* ========================= */
@@ -113,56 +107,56 @@ body {
 /* ========================= */
 
 form {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 /* elk input-blok netjes onder elkaar */
 .form-group {
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 10px;
 }
 
 /* label boven input */
 .form-group label {
-    margin-bottom: 6px;
-    font-size: 12px;
-    color: #1f2f36;
+  margin-bottom: 6px;
+  font-size: 12px;
+  color: #1f2f36;
 }
 
 /* input full width */
 .form-group input {
-    padding: 10px 12px;
-    border-radius: 10px;
-    border: 1px solid #d7e3e7;
-    font-size: 14px;
-    outline: none;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #d7e3e7;
+  font-size: 14px;
+  outline: none;
 }
 
 .form-group input:focus {
-    border-color: #00a6b6;
+  border-color: #00a6b6;
 }
 
 .primary-btn {
-    margin-top: 18px;
-    background: #00a6b6;
-    color: white;
-    border: none;
-    padding: 12px;
-    border-radius: 10px;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
+  margin-top: 18px;
+  background: #00a6b6;
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
 }
 
 .primary-btn:hover {
-    background: #0093a2;
+  background: #0093a2;
 }
 
 .error {
-    color: #d93025;
-    font-size: 12px;
-    margin-top: 4px;
+  color: #d93025;
+  font-size: 12px;
+  margin-top: 4px;
 }

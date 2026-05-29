@@ -1,0 +1,10 @@
+.calendar-section {
+  margin-top: 2rem;
+}
+
+.calendar-container {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  min-height: 600px;
+}
