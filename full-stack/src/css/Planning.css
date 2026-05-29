@@ -1,5 +1,9 @@
 .planning-page {
-  padding: 2rem;
+  width: 100%;
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 2rem 3rem;
+  box-sizing: border-box;
 }
 
 .planning-page h1 {
@@ -15,7 +19,7 @@
 
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(4, minmax(220px, 1fr));
   gap: 1rem;
   margin-bottom: 2rem;
 }
@@ -45,7 +49,8 @@
 }
 
 .search-input {
-  width: 100%;
+  flex: 1;
+  min-width: 300px;
   padding: 1rem;
   border: 1px solid #e5e7eb;
   border-radius: 12px;
