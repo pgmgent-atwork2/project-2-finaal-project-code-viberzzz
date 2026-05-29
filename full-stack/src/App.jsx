@@ -6,7 +6,7 @@ import Login from "./pages/login";
 import Home2 from "./pages/Planning";
 import Reports from "./pages/Reports";
 import Admin from "./pages/Admin";
-import Home from "./pages/Home";
+import Units from "./pages/Units";
 import Unit from "./pages/Unit";
 import AquariumDashboard from "./pages/AquariumDashboard";
 import "./App.css";
@@ -47,7 +47,7 @@ function App() {
             element={
               <ProtectedRoute>
                 <Layout>
-                  <Home />
+                  <Units />
                 </Layout>
               </ProtectedRoute>
             }
