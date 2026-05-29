@@ -40,6 +40,7 @@ const Calendar = () => {
 
   const currentMonth = format(startDate, "MMMM yyyy");
   const currentWeek = getWeek(startDate);
+
   return (
     <section className="calendar-section" aria-labelledby="calendar-heading">
       <h2 id="calendar-heading">Maintenance Calendar</h2>
@@ -83,6 +84,12 @@ const Calendar = () => {
           {weekDates.map((date) => (
             <li key={date} className="calendar-day">
               {format(date, "d")}
+
+              <div className="task-card">
+                <h4>Dolphin Pool A</h4>
+                <p>Backwash cycle</p>
+                <span>08:00</span>
+              </div>
             </li>
           ))}
         </ol>
