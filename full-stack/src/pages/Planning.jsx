@@ -1,3 +1,4 @@
+import Calendar from "../components/Planning/Calendar";
 import "../css/Planning.css";
 
 const Planning = () => {
@@ -67,10 +68,7 @@ const Planning = () => {
           </select>
         </fieldset>
       </section>
-
-      <div className="calendar-container">
-        <h2>Week View</h2>
-      </div>
+      <Calendar />
     </main>
   );
 };
