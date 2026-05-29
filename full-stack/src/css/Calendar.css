@@ -1,10 +1,59 @@
 .calendar-section {
   margin-top: 2rem;
 }
-
 .calendar-container {
-  background: white;
+  background: #f8fafc;
+  border: 1px solid #dbe3ea;
   border-radius: 12px;
   padding: 1.5rem;
   min-height: 600px;
+}
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.calendar-title {
+  text-align: center;
+}
+
+.calendar-title h3 {
+  margin-bottom: 0.25rem;
+}
+
+.calendar-nav-btn {
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+}
+
+.weekdays-row {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  margin-top: 2rem;
+  list-style: none;
+}
+
+.weekday {
+  text-align: center;
+  font-weight: 600;
+  padding: 1rem;
+  border-bottom: 1px solid #dbe3ea;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  list-style: none;
+}
+
+.calendar-day {
+  min-height: 400px;
+  border-right: 1px solid #e5e7eb;
+}
+
+.calendar-day:last-child {
+  border-right: none;
 }
