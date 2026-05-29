@@ -1,63 +1,92 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider } from './context/auth';
-import ProtectedRoute from './components/ProtectedRoute';
-import Layout from './components/Layout';
-import Login from './pages/login';
-import Home from './pages/Home';
-import Home2 from './pages/Home2';
-import Unit from './pages/Unit';
-import AquariumDashboard from './pages/AquariumDashboard';
-import './App.css';
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { AuthProvider } from "./context/auth";
+import ProtectedRoute from "./components/ProtectedRoute";
+import Layout from "./components/Layout";
+import Login from "./pages/login";
+import Home2 from "./pages/Planning";
+import Reports from "./pages/Reports";
+import Admin from "./pages/Admin";
+import Home from "./pages/Home";
+import Unit from "./pages/Unit";
+import AquariumDashboard from "./pages/AquariumDashboard";
+import "./App.css";
 
 function App() {
   return (
+    <AuthProvider>
+      <Router>
+        <Routes>
+          {/* Public Auth Routes */}
+          <Route path="/login" element={<Login />} />
 
-      <AuthProvider>
-        <Router>
-          <Routes>
-            {/* Public Auth Routes */}
-            <Route path="/login" element={<Login />} />
+          {/* Protected Routes with Layout (includes navbar) */}
+          <Route
+            path="/"
+            element={
+              <ProtectedRoute>
+                <Layout>
+                  <AquariumDashboard />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
 
-            {/* Protected Routes with Layout (includes navbar) */}
-            <Route
-              path="/"
-              element={
-                <ProtectedRoute>
-                  <Layout>
-                    <AquariumDashboard />
-                  </Layout>
-                </ProtectedRoute>
-              }
-            />
-            
-            <Route
-              path="/units/:id"
-              element={
-                <ProtectedRoute>
-                  <Layout>
-                    <Unit/>
-                  </Layout>
-                </ProtectedRoute>
-              }
-            />
-            
-            <Route
-              path="/planning"
-              element={
-                <ProtectedRoute>
-                  <Layout>
-                    <Home2 />
-                  </Layout>
-                </ProtectedRoute>
-              }
-            />
+          <Route
+            path="/units/:id"
+            element={
+              <ProtectedRoute>
+                <Layout>
+                  <Unit />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
 
-            {/* Redirect unknown routes to home */}
-            <Route path="*" element={<Navigate to="/" replace />} />
+          <Route
+            path="/units"
+            element={
+              <ProtectedRoute>
+                <Layout>
+                  <Home />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
 
-          </Routes>
-        </Router>
-      </AuthProvider>
+          <Route
+            path="/planning"
+            element={
+              <ProtectedRoute>
+                <Layout>
+                  <Home2 />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/reports"
+            element={
+              <ProtectedRoute>
+                <Layout>
+                  <Reports />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin"
+            element={
+              <ProtectedRoute>
+                <Layout>
+                  <Admin />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
+      </Router>
+    </AuthProvider>
   );
 }
 

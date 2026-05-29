@@ -1,9 +1,8 @@
-import { useAuth } from '../context/auth/index.jsx';
-import { useState, useEffect } from 'react';
-import { getFiltratieUnits  } from '../api/filtratie_unit/api.filtratie_unit.ts';
+import { useAuth } from "../context/auth/index.jsx";
+import { useState, useEffect } from "react";
+import { getFiltratieUnits } from "../api/filtratie_unit/api.filtratie_unit.ts";
 
 const Home = () => {
-  const [user, setuser] = useState(null);
   const { auth } = useAuth();
   const [filtratieUnits, setFiltratieUnits] = useState([]);
 
@@ -12,17 +11,16 @@ const Home = () => {
       const data = await getFiltratieUnits();
       setFiltratieUnits(data);
     } catch (error) {
-      console.error('Error fetching filtratie units:', error);
+      console.error("Error fetching filtration units:", error);
     }
   };
-  
 
   useEffect(() => {
     fetchFiltratieUnits();
   }, [auth]);
 
   return (
-    <div style={{ padding: '40px' }}>
+    <div style={{ padding: "40px" }}>
       <h1>filtration Units</h1>
       <form>
         <input type="text" placeholder="Search filtratie units..." />
