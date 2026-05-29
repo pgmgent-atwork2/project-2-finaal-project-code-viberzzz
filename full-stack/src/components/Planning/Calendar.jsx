@@ -1,4 +1,5 @@
 import "../../css/Calendar.css";
+import { startOfWeek, addDays, format, getWeek } from "date-fns";
 
 const Calendar = () => {
   const weekdays = [
@@ -11,8 +12,16 @@ const Calendar = () => {
     { short: "Sun", full: "Sunday" },
   ];
 
-  const weekDates = [26, 27, 28, 29, 30, 31, 1];
+  const startDate = startOfWeek(new Date(), {
+    weekStartsOn: 1,
+  });
 
+  const weekDates = Array.from({ length: 7 }, (_, index) =>
+    addDays(startDate, index),
+  );
+
+  const currentMonth = format(startDate, "MMMM yyyy");
+  const currentWeek = getWeek(startDate);
   return (
     <section className="calendar-section" aria-labelledby="calendar-heading">
       <h2 id="calendar-heading">Maintenance Calendar</h2>
@@ -24,8 +33,8 @@ const Calendar = () => {
           </button>
 
           <div className="calendar-title">
-            <h3>June 2026</h3>
-            <p>Week 22</p>
+            <h3>{currentMonth}</h3>
+            <p>Week {currentWeek}</p>
           </div>
 
           <button className="calendar-nav-btn" aria-label="Next week">
@@ -47,7 +56,7 @@ const Calendar = () => {
         <ol className="calendar-grid" aria-label="Week days">
           {weekDates.map((date) => (
             <li key={date} className="calendar-day">
-              {date}
+              {format(date, "d")}
             </li>
           ))}
         </ol>
