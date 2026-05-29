@@ -1,5 +1,13 @@
 import "../../css/Calendar.css";
-import { startOfWeek, addDays, format, getWeek } from "date-fns";
+import {
+  startOfWeek,
+  addDays,
+  format,
+  getWeek,
+  subWeeks,
+  addWeeks,
+} from "date-fns";
+import { useState } from "react";
 
 const Calendar = () => {
   const weekdays = [
@@ -12,7 +20,17 @@ const Calendar = () => {
     { short: "Sun", full: "Sunday" },
   ];
 
-  const startDate = startOfWeek(new Date(), {
+  const [currentDate, setCurrentDate] = useState(new Date());
+
+  const handlePreviousWeek = () => {
+    setCurrentDate(subWeeks(currentDate, 1));
+  };
+
+  const handleNextWeek = () => {
+    setCurrentDate(addWeeks(currentDate, 1));
+  };
+
+  const startDate = startOfWeek(currentDate, {
     weekStartsOn: 1,
   });
 
@@ -28,7 +46,11 @@ const Calendar = () => {
 
       <div className="calendar-container">
         <header className="calendar-header">
-          <button className="calendar-nav-btn" aria-label="Previous week">
+          <button
+            className="calendar-nav-btn"
+            aria-label="Previous week"
+            onClick={handlePreviousWeek}
+          >
             ←
           </button>
 
@@ -37,7 +59,11 @@ const Calendar = () => {
             <p>Week {currentWeek}</p>
           </div>
 
-          <button className="calendar-nav-btn" aria-label="Next week">
+          <button
+            className="calendar-nav-btn"
+            aria-label="Next week"
+            onClick={handleNextWeek}
+          >
             →
           </button>
         </header>
