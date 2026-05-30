@@ -25,11 +25,11 @@ const Home = () => {
   return (
     <div style={{ padding: "40px" }}>
       <h1>Welcome to Dashboard</h1>
-      {auth && (
-        <div>
+      {auth?.user && (
+        <>
           <p>Logged in as: {auth.user.email}</p>
           <p>User ID: {auth.user.id}</p>
-        </div>
+        </>
       )}
       <div>
         <h2>Filtratie Units</h2>
