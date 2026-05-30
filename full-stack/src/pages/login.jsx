@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/auth";
-import { logout, registerUser } from "../api/authApi";
+import { registerUser } from "../api/authApi";
 
 import "../css/reset.css";
 import "../css/styleLogin.css";
@@ -11,14 +11,14 @@ const Login = () => {
   // Use login from auth context
   const navigate = useNavigate();
   const { login, isInitialized, isLoggedIn } = useAuth();
-  
+
   // Redirect to home if already logged in
   useEffect(() => {
-    if (isLoggedIn) { 
-      logout();
+    if (isLoggedIn && isInitialized) {
+      navigate("/");
     }
-  }, []);
-  
+  }, [isLoggedIn, isInitialized, navigate]);
+
   const [isSignUp, setIsSignUp] = useState(false);
 
   const [email, setEmail] = useState("");
@@ -59,7 +59,7 @@ const Login = () => {
       try {
         if (!isSignUp) {
           // Sign in logic
-          
+
           await login({ email, password });
           navigate("/");
         } else {
@@ -69,7 +69,9 @@ const Login = () => {
         }
       } catch (error) {
         console.error("Authentication failed:", error);
-        setErrors({ general: error.message || "Authentication failed. Please try again." });
+        setErrors({
+          general: error.message || "Authentication failed. Please try again.",
+        });
       } finally {
         setLoading(false);
       }
@@ -78,7 +80,6 @@ const Login = () => {
 
   return (
     <div className="container">
-
       <div className="left">
         <div className="brand">
           <span className="waves">≈≈≈</span>
@@ -87,23 +88,21 @@ const Login = () => {
 
         <div className="hero-text">
           <h1>
-            Life Support Systems<br />
+            Life Support Systems
+            <br />
             Operations
           </h1>
           <p>
-            Monitor every filtration unit, log measurements on the go,
-            and keep the water perfect for our animals.
+            Monitor every filtration unit, log measurements on the go, and keep
+            the water perfect for our animals.
           </p>
         </div>
 
-        <div className="footer">
-          © Seapark Marine Park
-        </div>
+        <div className="footer">© Seapark Marine Park</div>
       </div>
 
       <div className="right">
         <div className="login-box">
-
           <h2>{isSignUp ? "Create account" : "Welcome back"}</h2>
 
           <p className="subtitle">
@@ -142,7 +141,6 @@ const Login = () => {
           </div>
 
           <form onSubmit={handleSubmit} noValidate>
-
             {/* NAME */}
             {isSignUp && (
               <div className="form-group">
@@ -196,12 +194,9 @@ const Login = () => {
             <button type="submit" className="primary-btn" disabled={loading}>
               {loading ? "Loading..." : isSignUp ? "Create account" : "Sign in"}
             </button>
-
           </form>
-
         </div>
       </div>
-
     </div>
   );
 };
