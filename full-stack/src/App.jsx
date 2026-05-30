@@ -8,6 +8,7 @@ import Reports from "./pages/Reports";
 import Admin from "./pages/Admin";
 import Units from "./pages/Units";
 import Unit from "./pages/Unit";
+import SupabaseTest from "./pages/supabaseTest";
 import AquariumDashboard from "./pages/AquariumDashboard";
 import "./App.css";
 
@@ -74,6 +75,20 @@ function App() {
               </ProtectedRoute>
             }
           />
+
+          <Route path="/supabase-test" element={<SupabaseTest />} />
+
+          <Route
+            path="/supabase-test"
+            element={
+              <ProtectedRoute>
+                <Layout>
+                  <SupabaseTest />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+
           <Route
             path="/admin"
             element={
