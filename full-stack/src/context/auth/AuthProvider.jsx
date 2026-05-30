@@ -1,57 +1,58 @@
 import AuthContext from "./AuthContext";
 import { useState, useCallback, useEffect } from "react";
 import { getCurrentAuth, login } from "../../api/authApi";
-import { API } from "../../api/supabaseClient";
+import { API } from "../../lib/supabaseClient";
 
 const AuthProvider = ({ children }) => {
-    const [auth, setAuth] = useState(null);  
-    const [isInitialized, setIsInitialized] = useState(false);
-    
-    const fetchAuth = useCallback(async () => {
-        try {
-            const currentAuth = await getCurrentAuth();
-            setAuth(currentAuth);
-        } catch {
-            setAuth(null);
-        }
-    }, []);
+  const [auth, setAuth] = useState(null);
+  const [isInitialized, setIsInitialized] = useState(false);
 
-    useEffect(() => {
-        fetchAuth().finally(() => setIsInitialized(true));
-
-        API.auth.onAuthStateChange((event) => {
-            switch(event) {
-                case "USER_UPDATED":
-                case "TOKEN_REFRESHED":
-                    fetchAuth();
-                    break;
-                case "SIGNED_OUT":
-                    setAuth(null);
-                    break;
-                default:
-                    break;
-            }
-        });
-    }, [fetchAuth]);
-    
-    const handleLogin = async (data) => {
-        const newAuth = await login(data);
-        setAuth(newAuth);
-        return newAuth;
+  const fetchAuth = useCallback(async () => {
+    try {
+      const currentAuth = await getCurrentAuth();
+      setAuth(currentAuth);
+    } catch {
+      setAuth(null);
     }
+  }, []);
 
-    return (
-        <AuthContext.Provider
-            value={{
-                auth,
-                refresh: fetchAuth,
-                isInitialized,
-                isLoggedIn: !!auth,
-                login: handleLogin
-            }}>
-            {isInitialized ? children : null}
-        </AuthContext.Provider>
-    );
+  useEffect(() => {
+    fetchAuth().finally(() => setIsInitialized(true));
+
+    API.auth.onAuthStateChange((event) => {
+      switch (event) {
+        case "USER_UPDATED":
+        case "TOKEN_REFRESHED":
+          fetchAuth();
+          break;
+        case "SIGNED_OUT":
+          setAuth(null);
+          break;
+        default:
+          break;
+      }
+    });
+  }, [fetchAuth]);
+
+  const handleLogin = async (data) => {
+    const newAuth = await login(data);
+    setAuth(newAuth);
+    return newAuth;
+  };
+
+  return (
+    <AuthContext.Provider
+      value={{
+        auth,
+        refresh: fetchAuth,
+        isInitialized,
+        isLoggedIn: !!auth,
+        login: handleLogin,
+      }}
+    >
+      {isInitialized ? children : null}
+    </AuthContext.Provider>
+  );
 };
 
 export default AuthProvider;

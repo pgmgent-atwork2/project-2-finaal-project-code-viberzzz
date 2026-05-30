@@ -1,4 +1,4 @@
-import { API } from "../supabaseClient";
+import { API } from "../././../lib/supabaseClient";
 import { Onderhoud } from "../../types/types.onderhoud";
 
 export const getOnderhoudItems = async (): Promise<Onderhoud[] | null> => {
@@ -10,8 +10,12 @@ export const getOnderhoudItems = async (): Promise<Onderhoud[] | null> => {
   return data;
 };
 
-export const getOnderhoudByUnitId = async (unitId: string): Promise<Onderhoud[] | null> => {
-  const { data, error } = await API.from("onderhoud").select("*").eq("unit_id", unitId);
+export const getOnderhoudByUnitId = async (
+  unitId: string,
+): Promise<Onderhoud[] | null> => {
+  const { data, error } = await API.from("onderhoud")
+    .select("*")
+    .eq("unit_id", unitId);
   if (error) {
     console.error("Error fetching onderhoud by unit ID:", error);
     return null;
