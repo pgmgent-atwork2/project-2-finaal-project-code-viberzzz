@@ -4,3 +4,26 @@
   gap: 1.5rem;
   margin-top: 2rem;
 }
+
+.overdue-tasks {
+  background: white;
+  border: 1px solid #dbe3ea;
+  border-radius: 12px;
+  padding: 1.5rem;
+}
+
+.overdue-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.overdue-count {
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.875rem;
+  font-weight: 600;
+
+  background: #fee2e2;
+  color: #dc2626;
+}

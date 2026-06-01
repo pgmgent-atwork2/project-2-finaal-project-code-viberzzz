@@ -1,5 +1,6 @@
 import Calendar from "../components/Planning/Calendar";
 import UpcomingMaintenance from "../components/Planning/UpcomingMaintenance";
+import OverdueTasks from "../components/Planning/OverdueTasks";
 import "../css/Planning.css";
 
 const Planning = () => {
@@ -71,7 +72,10 @@ const Planning = () => {
       </section>
       <Calendar />
 
-      <UpcomingMaintenance />
+      <div className="maintenance-overview">
+        <UpcomingMaintenance />
+        <OverdueTasks />
+      </div>
     </main>
   );
 };

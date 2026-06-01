@@ -1,3 +1,4 @@
+import "../../css/OverdueTasks.css";
 const OverdueTasks = () => {
   return (
     <section className="overdue-tasks">
@@ -9,6 +10,17 @@ const OverdueTasks = () => {
 
         <span className="overdue-count">2</span>
       </div>
+      <article className="overdue-item">
+        <h4>Sand Filter Inspection</h4>
+
+        <p className="overdue-unit">Dolphin Pool A</p>
+
+        <footer className="overdue-meta">
+          <span role="status" aria-live="polite">
+            Overdue by 3 days
+          </span>
+        </footer>
+      </article>
     </section>
   );
 };
