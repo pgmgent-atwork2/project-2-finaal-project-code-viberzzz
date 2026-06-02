@@ -57,7 +57,7 @@ export const login = async ({ email, password }) => {
     throw error;
   }
 
-  if (!data || !data.session) {
+  if (!data?.session?.user) {
     throw new Error("User not found after login");
   }
 
@@ -65,13 +65,13 @@ export const login = async ({ email, password }) => {
   const { user } = data.session;
   const { data: user_data } = await API.from("gebruiker")
     .select("*")
-    .eq("email", email)
+    .eq("id", user.id)
     .single();
 
   return {
     user: {
       email: user.email ?? "",
-      ...user_data,
+      ...(user_data ?? {}),
     },
     session: data.session,
   };
