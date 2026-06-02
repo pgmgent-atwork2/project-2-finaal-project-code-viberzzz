@@ -1,25 +1,21 @@
+import { useMemo } from "react";
+import { formatDistanceToNow } from "date-fns";
 import "../../css/OverdueTasks.css";
-const OverdueTasks = () => {
-  const overdueTasks = [
-    {
-      id: 1,
-      title: "Sand Filter Inspection",
-      unit: "Dolphin Pool A",
-      overdueDays: 3,
-    },
-    {
-      id: 2,
-      title: "Pump Maintenance",
-      unit: "Shark Tank",
-      overdueDays: 5,
-    },
-    {
-      id: 3,
-      title: "UV System Check",
-      unit: "Seal Pool",
-      overdueDays: 2,
-    },
-  ];
+
+const OverdueTasks = ({ items = [], onItemClick = () => {} }) => {
+  const overdueTasks = useMemo(() => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    return items
+      .filter((item) => {
+        if (item.status !== "gepland") return false;
+        const planDate = new Date(item.start_datum);
+        planDate.setHours(0, 0, 0, 0);
+        return planDate < today;
+      })
+      .sort((a, b) => new Date(a.start_datum) - new Date(b.start_datum));
+  }, [items]);
 
   return (
     <section className="overdue-tasks">
@@ -28,21 +24,44 @@ const OverdueTasks = () => {
           <h3>Overdue tasks</h3>
           <p>Require immediate attention</p>
         </div>
-        <span className="overdue-count">{overdueTasks.length}</span>{" "}
+
+        <span className="overdue-count">{overdueTasks.length}</span>
       </div>
-      {overdueTasks.map((task) => (
-        <article key={task.id} className="overdue-item">
-          <h4>{task.title}</h4>
 
-          <p className="overdue-unit">{task.unit}</p>
+      {overdueTasks.length === 0 ? (
+        <p style={{ padding: "20px", color: "#64748b" }}>
+          No overdue tasks - great job!
+        </p>
+      ) : (
+        overdueTasks.map((item) => (
+          <article
+            key={item.id}
+            className="overdue-item"
+            onClick={() => onItemClick(item)}
+            style={{ cursor: "pointer" }}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                onItemClick(item);
+              }
+            }}
+          >
+            <h4>{item.notitie}</h4>
 
-          <div className="overdue-meta">
-            <span role="status" aria-live="polite">
-              Overdue by {task.overdueDays} days
-            </span>
-          </div>
-        </article>
-      ))}
+            <p className="overdue-unit">{item.unit?.naam || "Unknown Unit"}</p>
+
+            <footer className="overdue-meta">
+              <span role="status" aria-live="polite">
+                Overdue by{" "}
+                {formatDistanceToNow(new Date(item.start_datum), {
+                  addSuffix: false,
+                })}
+              </span>
+            </footer>
+          </article>
+        ))
+      )}
     </section>
   );
 };

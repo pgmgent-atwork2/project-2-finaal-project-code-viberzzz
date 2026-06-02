@@ -57,3 +57,63 @@
 .calendar-day:last-child {
   border-right: none;
 }
+
+.task-card {
+  padding: 0.75rem;
+  margin-top: 0.5rem;
+  border-radius: 6px;
+  background-color: white;
+  border-left: 4px solid #94a3b8;
+}
+
+.task-card h4 {
+  margin: 0;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.task-card p {
+  margin: 0;
+  font-size: 0.75rem;
+  color: #6b7280;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.task-card--urgent {
+  border-left-color: #dc2626;
+  background-color: #fef2f2;
+}
+
+.task-card--urgent h4 {
+  color: #dc2626;
+}
+
+.task-card--pending {
+  border-left-color: #f97316;
+  background-color: #fff7ed;
+}
+
+.task-card--pending h4 {
+  color: #f97316;
+}
+
+.task-card--completed {
+  border-left-color: #16a34a;
+  background-color: #f0fdf4;
+}
+
+.task-card--completed h4 {
+  color: #16a34a;
+}
+
+.task-card--skipped {
+  border-left-color: #9ca3af;
+  background-color: #f3f4f6;
+}
+
+.task-card--skipped h4 {
+  color: #6b7280;
+}

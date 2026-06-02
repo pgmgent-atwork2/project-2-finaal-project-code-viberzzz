@@ -6,10 +6,11 @@ import {
   getWeek,
   subWeeks,
   addWeeks,
+  isSameDay,
 } from "date-fns";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 
-const Calendar = () => {
+const Calendar = ({ items = [], onItemClick = () => {} }) => {
   const weekdays = [
     { short: "Mon", full: "Monday" },
     { short: "Tue", full: "Tuesday" },
@@ -40,6 +41,30 @@ const Calendar = () => {
 
   const currentMonth = format(startDate, "MMMM yyyy");
   const currentWeek = getWeek(startDate);
+
+  const tasksByDate = useMemo(() => {
+    const map = {};
+    items.forEach((item) => {
+      if (item.start_datum) {
+        const dateKey = format(new Date(item.start_datum), "yyyy-MM-dd");
+        if (!map[dateKey]) {
+          map[dateKey] = [];
+        }
+        map[dateKey].push(item);
+      }
+    });
+    return map;
+  }, [items]);
+
+  const getTaskStatusClass = (task) => {
+    if (task.status === "voltooid") return "task-card--completed";
+    if (task.status === "overgeslagen") return "task-card--skipped";
+    const planDate = new Date(task.start_datum);
+    planDate.setHours(0, 0, 0, 0);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return planDate < today ? "task-card--urgent" : "task-card--pending";
+  };
 
   return (
     <section className="calendar-section" aria-labelledby="calendar-heading">
@@ -81,17 +106,37 @@ const Calendar = () => {
 
         {/*WEEKDATES*/}
         <ol className="calendar-grid" aria-label="Week days">
-          {weekDates.map((date) => (
-            <li key={date} className="calendar-day">
-              {format(date, "d")}
+          {weekDates.map((date) => {
+            const dateKey = format(date, "yyyy-MM-dd");
+            const dayTasks = tasksByDate[dateKey] || [];
+            return (
+              <li key={dateKey} className="calendar-day">
+                {format(date, "d")}
 
-              <div className="task-card">
-                <h4>Dolphin Pool A</h4>
-                <p>Backwash cycle</p>
-                <span>08:00</span>
-              </div>
-            </li>
-          ))}
+                {dayTasks.map((task) => (
+                  <div
+                    key={task.id}
+                    className={`task-card ${getTaskStatusClass(task)}`}
+                    onClick={() => onItemClick(task)}
+                    style={{ cursor: "pointer" }}
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        onItemClick(task);
+                      }
+                    }}
+                  >
+                    <h4>{task.unit?.naam || "Unit"}</h4>
+                    <p>{task.notitie}</p>
+                    <small style={{ color: "#6b7280", fontSize: "0.75rem" }}>
+                      {task.gebruiker?.naam || "Unassigned"}
+                    </small>
+                  </div>
+                ))}
+              </li>
+            );
+          })}
         </ol>
       </div>
     </section>

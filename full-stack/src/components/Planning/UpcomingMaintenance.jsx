@@ -1,32 +1,23 @@
+import { useMemo } from "react";
+import { format } from "date-fns";
 import "../../css/UpcomingMaintenance.css";
 
-const UpcomingMaintenance = () => {
-  const upcomingTasks = [
-    {
-      id: 1,
-      unit: "Dolfijnenbad A",
-      task: "Sand filter rinse",
-      technician: "Lazarus The 3rd",
-      date: "2026-05-26",
-      time: "08:30",
-    },
-    {
-      id: 2,
-      unit: "Shark Tank",
-      task: "Pump maintenance",
-      technician: "Sarah Johnson",
-      date: "2026-05-27",
-      time: "09:00",
-    },
-    {
-      id: 3,
-      unit: "Seal Pool",
-      task: "UV system check",
-      technician: "Tom Jacobs",
-      date: "2026-05-28",
-      time: "10:15",
-    },
-  ];
+const UpcomingMaintenance = ({ items = [], onItemClick = () => {} }) => {
+  const upcomingItems = useMemo(() => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    return items
+      .filter((item) => {
+        if (item.status !== "gepland") return false;
+        const planDate = new Date(item.start_datum);
+        planDate.setHours(0, 0, 0, 0);
+        return planDate >= today;
+      })
+      .sort((a, b) => new Date(a.start_datum) - new Date(b.start_datum))
+      .slice(0, 5);
+  }, [items]);
+
   return (
     <section className="upcoming-maintenance">
       <div className="maintenance-header">
@@ -34,26 +25,42 @@ const UpcomingMaintenance = () => {
           <h3>Upcoming maintenance</h3>
           <p>Next scheduled tasks across all units</p>
         </div>
-        <span className="maintenance-count">{upcomingTasks.length}</span>{" "}
+
+        <span className="maintenance-count">{upcomingItems.length}</span>
       </div>
 
-      {upcomingTasks.map((task) => (
-        <article key={task.id} className="maintenance-item">
-          <div className="maintenance-item-content">
-            <h4>{task.unit}</h4>
-
-            <p>{task.task}</p>
-
-            <footer className="maintenance-meta">
-              <span>{task.technician}</span>
-
-              <time dateTime={task.date}>{task.date}</time>
-
-              <time dateTime={task.time}>{task.time}</time>
-            </footer>
-          </div>
-        </article>
-      ))}
+      {upcomingItems.length === 0 ? (
+        <p style={{ padding: "20px", color: "#64748b" }}>
+          No upcoming maintenance scheduled
+        </p>
+      ) : (
+        upcomingItems.map((item) => (
+          <article
+            key={item.id}
+            className={`maintenance-item status-pending`}
+            onClick={() => onItemClick(item)}
+            style={{ cursor: "pointer" }}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                onItemClick(item);
+              }
+            }}
+          >
+            <div className="maintenance-item-content">
+              <h4>{item.unit?.naam || "Unknown Unit"}</h4>
+              <p>{item.notitie}</p>
+              <footer className="maintenance-meta">
+                <span>{item.gebruiker?.naam || "Unassigned"}</span>
+                <time dateTime={item.start_datum}>
+                  {format(new Date(item.start_datum), "yyyy-MM-dd")}
+                </time>
+              </footer>
+            </div>
+          </article>
+        ))
+      )}
     </section>
   );
 };
