@@ -1,0 +1,26 @@
+.reports-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding: 2rem;
+}
+
+.reports-header-left p {
+  margin-top: 0.5rem;
+}
+
+.reports-header-right {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.reports-header-right select,
+.reports-header-right button {
+  padding: 0.75rem 1rem;
+  border: 1px solid #dbe3ea;
+  border-radius: 8px;
+  background: white;
+  cursor: pointer;
+}
