@@ -37,7 +37,7 @@ function App() {
             element={
               <ProtectedRoute>
                 <Layout>
-                  <Unit />
+                  <Unit/>
                 </Layout>
               </ProtectedRoute>
             }
@@ -75,8 +75,6 @@ function App() {
               </ProtectedRoute>
             }
           />
-
-          <Route path="/supabase-test" element={<SupabaseTest />} />
 
           <Route
             path="/supabase-test"
