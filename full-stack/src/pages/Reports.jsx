@@ -1,7 +1,11 @@
+import ReportsHeader from "../components/Reports/ReportsHeader";
+import RecentLogsTable from "../components/Reports/RecentLogsTable";
+
 function Reports() {
   return (
     <div>
-      <h1>Reports Page</h1>
+      <ReportsHeader />
+      <RecentLogsTable />
     </div>
   );
 }
