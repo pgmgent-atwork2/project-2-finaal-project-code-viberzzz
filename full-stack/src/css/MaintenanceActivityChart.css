@@ -1,0 +1,23 @@
+.maintenance-card {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-top: 2rem;
+}
+
+.maintenance-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.maintenance-filter {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #dbe4e8;
+  border-radius: 8px;
+}
+
+.maintenance-chart-content {
+  height: 350px;
+}
