@@ -1,9 +1,61 @@
+import { useEffect, useState } from "react";
 import Calendar from "../components/Planning/Calendar";
 import UpcomingMaintenance from "../components/Planning/UpcomingMaintenance";
 import OverdueTasks from "../components/Planning/OverdueTasks";
+import { getOnderhoudItems } from "../api/onderhoud/api.onderhoud.ts";
 import "../css/Planning.css";
 
 const Planning = () => {
+  const [items, setItems] = useState([]);
+  const [stats, setStats] = useState({
+    total: 0,
+    pending: 0,
+    overdue: 0,
+    completed: 0,
+  });
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await getOnderhoudItems();
+      console.log("Onderhoud items from API:", data);
+      if (data) {
+        setItems(data);
+        calculateStats(data);
+      }
+    };
+    fetchData();
+  }, []);
+
+  const calculateStats = (data) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    let pending = 0;
+    let overdue = 0;
+    let completed = 0;
+
+    data.forEach((item) => {
+      if (item.status === "voltooid") {
+        completed++;
+      } else if (item.status === "gepland") {
+        const planDate = new Date(item.start_datum);
+        planDate.setHours(0, 0, 0, 0);
+        if (planDate < today) {
+          overdue++;
+        } else {
+          pending++;
+        }
+      }
+    });
+
+    setStats({
+      total: data.length,
+      pending,
+      overdue,
+      completed,
+    });
+  };
+
   return (
     <main className="planning-page">
       <header>
@@ -17,19 +69,19 @@ const Planning = () => {
       <section aria-label="Task statistics">
         <ul className="stats-grid">
           <li className="stat-card">
-            <span className="stat-value">9</span>
+            <span className="stat-value">{stats.total}</span>
             <span className="stat-label">Total Tasks</span>
           </li>
           <li className="stat-card">
-            <span className="stat-value">3</span>
+            <span className="stat-value">{stats.pending}</span>
             <span className="stat-label">Pending</span>
           </li>
           <li className="stat-card">
-            <span className="stat-value">2</span>
+            <span className="stat-value">{stats.overdue}</span>
             <span className="stat-label">Urgent</span>
           </li>
           <li className="stat-card">
-            <span className="stat-value">2</span>
+            <span className="stat-value">{stats.completed}</span>
             <span className="stat-label">Completed</span>
           </li>
         </ul>
@@ -70,11 +122,11 @@ const Planning = () => {
           </select>
         </fieldset>
       </section>
-      <Calendar />
+      <Calendar items={items} />
 
       <div className="maintenance-overview">
-        <UpcomingMaintenance />
-        <OverdueTasks />
+        <UpcomingMaintenance items={items} />
+        <OverdueTasks items={items} />
       </div>
     </main>
   );

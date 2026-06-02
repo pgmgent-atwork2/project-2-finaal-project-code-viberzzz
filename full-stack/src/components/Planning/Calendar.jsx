@@ -6,10 +6,11 @@ import {
   getWeek,
   subWeeks,
   addWeeks,
+  isSameDay,
 } from "date-fns";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 
-const Calendar = () => {
+const Calendar = ({ items = [] }) => {
   const weekdays = [
     { short: "Mon", full: "Monday" },
     { short: "Tue", full: "Tuesday" },
@@ -40,6 +41,20 @@ const Calendar = () => {
 
   const currentMonth = format(startDate, "MMMM yyyy");
   const currentWeek = getWeek(startDate);
+
+  const tasksByDate = useMemo(() => {
+    const map = {};
+    items.forEach((item) => {
+      if (item.status === "gepland" && item.start_datum) {
+        const dateKey = format(new Date(item.start_datum), "yyyy-MM-dd");
+        if (!map[dateKey]) {
+          map[dateKey] = [];
+        }
+        map[dateKey].push(item);
+      }
+    });
+    return map;
+  }, [items]);
 
   return (
     <section className="calendar-section" aria-labelledby="calendar-heading">
@@ -81,17 +96,22 @@ const Calendar = () => {
 
         {/*WEEKDATES*/}
         <ol className="calendar-grid" aria-label="Week days">
-          {weekDates.map((date) => (
-            <li key={date} className="calendar-day">
-              {format(date, "d")}
+          {weekDates.map((date) => {
+            const dateKey = format(date, "yyyy-MM-dd");
+            const dayTasks = tasksByDate[dateKey] || [];
+            return (
+              <li key={dateKey} className="calendar-day">
+                {format(date, "d")}
 
-              <div className="task-card">
-                <h4>Dolphin Pool A</h4>
-                <p>Backwash cycle</p>
-                <span>08:00</span>
-              </div>
-            </li>
-          ))}
+                {dayTasks.map((task) => (
+                  <div key={task.id} className="task-card">
+                    <h4>{task.unit?.naam || "Unit"}</h4>
+                    <p>{task.notitie}</p>
+                  </div>
+                ))}
+              </li>
+            );
+          })}
         </ol>
       </div>
     </section>

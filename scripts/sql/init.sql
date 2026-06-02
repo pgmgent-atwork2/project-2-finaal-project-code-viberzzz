@@ -103,13 +103,13 @@ CREATE TABLE onderhoud (
 
     frequentie       onderhoud_frequentie NOT NULL,
     start_datum      DATE                 NOT NULL,
-    volgende_datum   DATE                 NOT NULL,
+    end_datum   DATE                 NOT NULL,
     status           onderhoud_status     NOT NULL DEFAULT 'gepland',
 
     notitie          TEXT,
     bijgewerkt_op    TIMESTAMPTZ NOT NULL DEFAULT NOW(),
 
-    CONSTRAINT volgende_na_start CHECK (volgende_datum >= start_datum)
+    CONSTRAINT end_na_start CHECK (end_datum >= start_datum)
 );
 
 CREATE INDEX idx_onderhoud_unit_id       ON onderhoud(unit_id);
