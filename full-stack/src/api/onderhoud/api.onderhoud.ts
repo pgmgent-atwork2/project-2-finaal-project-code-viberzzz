@@ -40,3 +40,20 @@ export const getOnderhoudByUnitId = async (
   }
   return data;
 };
+
+export const updateOnderhoudStatus = async (
+  id: string,
+  status: "gepland" | "voltooid" | "overgeslagen",
+): Promise<Onderhoud | null> => {
+  const { data, error } = await API.from("onderhoud")
+    .update({ status, bijgewerkt_op: new Date().toISOString() })
+    .eq("id", id)
+    .select();
+
+  if (error) {
+    console.error("Error updating onderhoud status:", error);
+    return null;
+  }
+
+  return data?.[0] || null;
+};

@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { formatDistanceToNow } from "date-fns";
 import "../../css/OverdueTasks.css";
 
-const OverdueTasks = ({ items = [] }) => {
+const OverdueTasks = ({ items = [], onItemClick = () => {} }) => {
   const overdueTasks = useMemo(() => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -34,7 +34,19 @@ const OverdueTasks = ({ items = [] }) => {
         </p>
       ) : (
         overdueTasks.map((item) => (
-          <article key={item.id} className="overdue-item">
+          <article
+            key={item.id}
+            className="overdue-item"
+            onClick={() => onItemClick(item)}
+            style={{ cursor: "pointer" }}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                onItemClick(item);
+              }
+            }}
+          >
             <h4>{item.notitie}</h4>
 
             <p className="overdue-unit">{item.unit?.naam || "Unknown Unit"}</p>

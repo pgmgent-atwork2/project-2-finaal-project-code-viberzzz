@@ -31,6 +31,47 @@
   border: 1px solid #e5e7eb;
 }
 
+.stat-card--urgent {
+  border-color: #dc2626;
+  background-color: #fef2f2;
+}
+
+.stat-card--urgent .stat-value {
+  color: #dc2626;
+}
+
+.stat-card--pending {
+  border-color: #f97316;
+  background-color: #fff7ed;
+}
+
+.stat-card--pending .stat-value {
+  color: #f97316;
+}
+
+.stat-card--completed {
+  border-color: #16a34a;
+  background-color: #f0fdf4;
+}
+
+.stat-card--completed .stat-value {
+  color: #16a34a;
+}
+
+.stat-value {
+  display: block;
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: #1f2937;
+}
+
+.stat-label {
+  display: block;
+  font-size: 0.9rem;
+  color: #6b7280;
+}
+
 .stat-card h2 {
   font-size: 2rem;
   font-weight: bold;

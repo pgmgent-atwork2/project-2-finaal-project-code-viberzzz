@@ -25,6 +25,13 @@
   padding: 1rem;
   border: 1px solid #dbe3ea;
   border-radius: 10px;
+  transition: all 0.2s ease;
+}
+
+.maintenance-item:hover {
+  background-color: #f9fafb;
+  border-color: #3b82f6;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
 .maintenance-item h4 {

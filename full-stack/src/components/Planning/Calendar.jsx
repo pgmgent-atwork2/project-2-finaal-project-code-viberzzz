@@ -10,7 +10,7 @@ import {
 } from "date-fns";
 import { useState, useMemo } from "react";
 
-const Calendar = ({ items = [] }) => {
+const Calendar = ({ items = [], onItemClick = () => {} }) => {
   const weekdays = [
     { short: "Mon", full: "Monday" },
     { short: "Tue", full: "Tuesday" },
@@ -45,7 +45,7 @@ const Calendar = ({ items = [] }) => {
   const tasksByDate = useMemo(() => {
     const map = {};
     items.forEach((item) => {
-      if (item.status === "gepland" && item.start_datum) {
+      if (item.start_datum) {
         const dateKey = format(new Date(item.start_datum), "yyyy-MM-dd");
         if (!map[dateKey]) {
           map[dateKey] = [];
@@ -55,6 +55,16 @@ const Calendar = ({ items = [] }) => {
     });
     return map;
   }, [items]);
+
+  const getTaskStatusClass = (task) => {
+    if (task.status === "voltooid") return "task-card--completed";
+    if (task.status === "overgeslagen") return "task-card--skipped";
+    const planDate = new Date(task.start_datum);
+    planDate.setHours(0, 0, 0, 0);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return planDate < today ? "task-card--urgent" : "task-card--pending";
+  };
 
   return (
     <section className="calendar-section" aria-labelledby="calendar-heading">
@@ -104,9 +114,24 @@ const Calendar = ({ items = [] }) => {
                 {format(date, "d")}
 
                 {dayTasks.map((task) => (
-                  <div key={task.id} className="task-card">
+                  <div
+                    key={task.id}
+                    className={`task-card ${getTaskStatusClass(task)}`}
+                    onClick={() => onItemClick(task)}
+                    style={{ cursor: "pointer" }}
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        onItemClick(task);
+                      }
+                    }}
+                  >
                     <h4>{task.unit?.naam || "Unit"}</h4>
                     <p>{task.notitie}</p>
+                    <small style={{ color: "#6b7280", fontSize: "0.75rem" }}>
+                      {task.gebruiker?.naam || "Unassigned"}
+                    </small>
                   </div>
                 ))}
               </li>

@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { format } from "date-fns";
 import "../../css/UpcomingMaintenance.css";
 
-const UpcomingMaintenance = ({ items = [] }) => {
+const UpcomingMaintenance = ({ items = [], onItemClick = () => {} }) => {
   const upcomingItems = useMemo(() => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -35,7 +35,19 @@ const UpcomingMaintenance = ({ items = [] }) => {
         </p>
       ) : (
         upcomingItems.map((item) => (
-          <article key={item.id} className="maintenance-item">
+          <article
+            key={item.id}
+            className={`maintenance-item status-pending`}
+            onClick={() => onItemClick(item)}
+            style={{ cursor: "pointer" }}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                onItemClick(item);
+              }
+            }}
+          >
             <div className="maintenance-item-content">
               <h4>{item.unit?.naam || "Unknown Unit"}</h4>
               <p>{item.notitie}</p>
