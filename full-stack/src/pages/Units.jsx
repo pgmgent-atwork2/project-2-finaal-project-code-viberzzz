@@ -1,10 +1,13 @@
 import { useAuth } from "../context/auth/index.jsx";
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { getFiltratieUnits } from "../api/filtratie_unit/api.filtratie_unit.ts";
+import UnitCard from "../components/unit/UnitCard";
 
 const Home = () => {
-  const [user, setuser] = useState(null);
+  const navigate = useNavigate();
   const { auth } = useAuth();
+  const [user, setuser] = useState(null); 
   const [filtratieUnits, setFiltratieUnits] = useState([]);
 
   const fetchFiltratieUnits = async () => {
@@ -19,87 +22,45 @@ const Home = () => {
 
   useEffect(() => {
     fetchFiltratieUnits();
-    setuser(auth?.user);
+    setuser(auth?.user)
   }, [auth]);
+
+  const getUnitStatus = (unit) => {
+    if (!unit.latestWaarde) return "inactive";
+    
+    const latest = unit.latestWaarde;
+    const range = Array.isArray(unit.waarden_range) ? unit.waarden_range[0] : unit.waarden_range;
+    
+    if (!range) return "active";
+    
+    // Check if any parameter is out of range
+    const isOutOfRange =
+      (latest.ph && (latest.ph < range.ph_min || latest.ph > range.ph_max)) ||
+      (latest.temperatuur && (latest.temperatuur < range.temperatuur_min || latest.temperatuur > range.temperatuur_max)) ||
+      (latest.water_level && (latest.water_level < range.water_level_min || latest.water_level > range.water_level_max)) ||
+      (latest.zoutgehalte && (latest.zoutgehalte < range.zoutgehalte_min || latest.zoutgehalte > range.zoutgehalte_max));
+    
+    return isOutOfRange ? "warning" : "active";
+  };
 
   return (
     <div style={{ padding: "40px" }}>
-      <h1>Welcome to Dashboard</h1>
+      <h1>Filtratie Units</h1>
       {auth?.user && (
-        <>
-          <p>Logged in as: {auth.user.email}</p>
-          <p>User ID: {auth.user.id}</p>
-        </>
+        <p style={{ color: "#64748b", marginBottom: "30px" }}>Logged in as: {auth.user.email}</p>
       )}
-      <div>
-        <h2>Filtratie Units</h2>
+      
+      <div className="units-grid">
         {filtratieUnits && filtratieUnits.length > 0 ? (
-          <ul>
-            {filtratieUnits.map((unit) => (
-              <li key={unit.id}>
-                <strong>{unit.naam}</strong> - {unit.locatie} ({unit.status})
-                {unit.waarden_range && (
-                  <div
-                    style={{
-                      marginLeft: "20px",
-                      marginTop: "10px",
-                      fontSize: "14px",
-                    }}
-                  >
-                    <p>
-                      <strong>Waarden Range:</strong>
-                    </p>
-                    <ul>
-                      <li>
-                        pH: {unit.waarden_range.ph_min} -{" "}
-                        {unit.waarden_range.ph_max}
-                      </li>
-                      <li>
-                        Temperatuur: {unit.waarden_range.temperatuur_min}°C -{" "}
-                        {unit.waarden_range.temperatuur_max}°C
-                      </li>
-                      <li>
-                        Water Level: {unit.waarden_range.water_level_min} -{" "}
-                        {unit.waarden_range.water_level_max}
-                      </li>
-                      <li>
-                        Zoutgehalte: {unit.waarden_range.zoutgehalte_min} -{" "}
-                        {unit.waarden_range.zoutgehalte_max}
-                      </li>
-                      <li>
-                        Microbiologie Max:{" "}
-                        {unit.waarden_range.microbiologie_max}
-                      </li>
-                    </ul>
-                  </div>
-                )}
-                {unit.latestWaarde && (
-                  <div
-                    style={{
-                      marginLeft: "20px",
-                      marginTop: "10px",
-                      fontSize: "14px",
-                    }}
-                  >
-                    <p>
-                      <strong>Laatste Waarde:</strong>
-                    </p>
-                    <ul>
-                      <li>pH: {unit.latestWaarde.ph}</li>
-                      <li>Temperatuur: {unit.latestWaarde.temperatuur}°C</li>
-                      <li>Water Level: {unit.latestWaarde.water_level}</li>
-                      <li>Zoutgehalte: {unit.latestWaarde.zoutgehalte}</li>
-                      <li>
-                        Microbiologie Max: {unit.latestWaarde.microbiologie}
-                      </li>
-                    </ul>
-                  </div>
-                )}
-              </li>
-            ))}
-          </ul>
+          filtratieUnits.map((unit) => (
+            <UnitCard
+              key={unit.id}
+              unit={{ ...unit, status: getUnitStatus(unit) }}
+              onClick={(u) => navigate(`/units/${u.id}`)}
+            />
+          ))
         ) : (
-          <p>No filtratie units found</p>
+          <p>No filtratie units available</p>
         )}
       </div>
     </div>

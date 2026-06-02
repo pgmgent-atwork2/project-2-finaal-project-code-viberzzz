@@ -33,10 +33,10 @@ export default function AquariumDashboard() {
     const fetchData = async () => {
       const data = await getFiltratieUnits();
       setUnits(data || []);
-      setuser(auth.user);
+      setuser(auth?.user);
     };
     fetchData();
-  });
+  }, [auth]); // Refetch if auth changes (e.g. user logs in/out)
 
   // Update stats when units change
   useEffect(() => {
@@ -60,7 +60,7 @@ export default function AquariumDashboard() {
       { label: "Need attention", value: needAttentionCount, icon: "⚠️" },
       { label: "Logs today", value: logsToday, icon: "📋" },
     ]);
-  }, [units, getUnitStatus]);
+  }, [units]);
 
   return (
     <>
