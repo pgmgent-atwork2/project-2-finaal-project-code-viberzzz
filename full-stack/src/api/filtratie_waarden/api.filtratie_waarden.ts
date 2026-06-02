@@ -24,3 +24,18 @@ export const getFiltratieWaardenByUnitId = async (
   }
   return data;
 };
+
+export const addFiltratieWaarde = async (
+  waarde: Partial<FiltratieWaarden>,
+): Promise<FiltratieWaarden | null> => {
+  const { data, error } = await API.from("filtratie_waarden")
+    .insert([waarde])
+    .select()
+    .single();
+  
+  if (error) {
+    console.error("Error adding filtratie waarde:", error);
+    return null;
+  }
+  return data;
+};

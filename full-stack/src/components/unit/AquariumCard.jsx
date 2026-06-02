@@ -1,6 +1,9 @@
 import { useState, useEffect } from "react";
 import { useParams } from 'react-router-dom';
 import { getFiltratieUnitById } from "../../api/filtratie_unit/api.filtratie_unit.ts";
+import { addFiltratieWaarde } from "../../api/filtratie_waarden/api.filtratie_waarden.ts";
+import { useAuth } from "../../context/auth";
+import PreviousLogsSection from "./PreviousLogsSection";
 import "../../css/aquariumCard.css";
 
 // ─── Mock data – replace with your DB/API calls ───────────────────────────────
@@ -131,50 +134,78 @@ function LogEntryModal({ tank, onClose, onSubmit }) {
 
 export default function AquariumCard({ onLogSubmit }) {
   const { id } = useParams();
+  const { auth } = useAuth();
   const [tank, setTank] = useState();
   const [loading, setLoading] = useState(!!id);
   const [modalOpen, setModalOpen] = useState(false);
-  // Fetch data from API if unitId is provided
-  useEffect(() => {
-
+  
+  // Fetch tank data function
+  const fetchTankData = async () => {
     if (!id) return;
+    
+    setLoading(true);
+    const data = await getFiltratieUnitById(id);
+    console.log("Fetched unit data:", data);
+    if (data) {
+      // Transform API data to match component structure
+      const latestWaarde = data.filtratie_waarden?.[0];
+      const range = Array.isArray(data.waarden_range) ? data.waarden_range[0] : data.waarden_range;
 
-    const fetchData = async () => {
-      setLoading(true);
-      const data = await getFiltratieUnitById(id);
-      console.log("Fetched unit data:", data);
-      if (data) {
-        // Transform API data to match component structure
-        const latestWaarde = data.filtratie_waarden?.[0];
-        const range = Array.isArray(data.waarden_range) ? data.waarden_range[0] : data.waarden_range;
+      const transformedTank = {
+        id: data.id,
+        naam: data.naam,
+        location: data.locatie,
+        status: "active", // Determine based on your status logic
+        lastInspection: latestWaarde?.gemeten_op ? new Date(latestWaarde.gemeten_op) : new Date(),
+        parameters: range ? [
+          { key: "pH",          value: latestWaarde?.ph ?? 0, unit: "",      min: range.ph_min,          max: range.ph_max,          decimals: 2 },
+          { key: "Temperatuur", value: latestWaarde?.temperatuur ?? 0, unit: "°C",    min: range.temperatuur_min, max: range.temperatuur_max, decimals: 1 },
+          { key: "Water Level", value: latestWaarde?.water_level ?? 0, unit: "",      min: range.water_level_min, max: range.water_level_max, decimals: 2 },
+          { key: "Zoutgehalte", value: latestWaarde?.zoutgehalte ?? 0, unit: "ppt",   min: range.zoutgehalte_min, max: range.zoutgehalte_max, decimals: 1 },
+          { key: "Microbiologie", value: latestWaarde?.microbiologie ?? 0, unit: "",  min: 0,                     max: range.microbiologie_max, decimals: 2 },
+        ] : [],
+        filtratie_waarden: data.filtratie_waarden || [],
+        waarden_range: range
+      };
 
-        const transformedTank = {
-          id: data.id,
-          naam: data.naam,
-          location: data.locatie,
-          status: "active", // Determine based on your status logic
-          lastInspection: latestWaarde?.gemeten_op ? new Date(latestWaarde.gemeten_op) : new Date(),
-          parameters: range ? [
-            { key: "pH",          value: latestWaarde?.ph ?? 0, unit: "",      min: range.ph_min,          max: range.ph_max,          decimals: 2 },
-            { key: "Temperatuur", value: latestWaarde?.temperatuur ?? 0, unit: "°C",    min: range.temperatuur_min, max: range.temperatuur_max, decimals: 1 },
-            { key: "Water Level", value: latestWaarde?.water_level ?? 0, unit: "",      min: range.water_level_min, max: range.water_level_max, decimals: 2 },
-            { key: "Zoutgehalte", value: latestWaarde?.zoutgehalte ?? 0, unit: "ppt",   min: range.zoutgehalte_min, max: range.zoutgehalte_max, decimals: 1 },
-            { key: "Microbiologie", value: latestWaarde?.microbiologie ?? 0, unit: "",  min: 0,                     max: range.microbiologie_max, decimals: 2 },
-          ] : [],
-          filtratie_waarden: data.filtratie_waarden || []
-        };
+      setTank(transformedTank);
+    }
+    setLoading(false);
+  };
 
-        setTank(transformedTank);
+  // Fetch data on mount
+  useEffect(() => {
+    fetchTankData();
+  }, [id]);
+
+  async function handleLogSubmit(entry) {
+    try {
+      // Transform form data to API format
+      const waarde = {
+        unit_id: entry.tankId,
+        gemeten_op: entry.timestamp.toISOString(),
+        medewerker_id: auth?.user?.id,
+        ph: entry.readings["pH"] ? parseFloat(entry.readings["pH"]) : null,
+        temperatuur: entry.readings["Temperatuur"] ? parseFloat(entry.readings["Temperatuur"]) : null,
+        water_level: entry.readings["Water Level"] ? parseFloat(entry.readings["Water Level"]) : null,
+        zoutgehalte: entry.readings["Zoutgehalte"] ? parseFloat(entry.readings["Zoutgehalte"]) : null,
+        microbiologie: entry.readings["Microbiologie"] ? parseFloat(entry.readings["Microbiologie"]) : null,
+        notitie: entry.notes || null,
+      };
+
+      const result = await addFiltratieWaarde(waarde);
+      
+      if (result) {
+        console.log("Filtratie waarde added successfully:", result);
+        onLogSubmit?.(entry);
+        // Refetch tank data to show updated values
+        await fetchTankData();
+      } else {
+        console.error("Failed to add filtratie waarde");
       }
-      setLoading(false);
-    };
-
-    fetchData();
-  }, []);
-
-  function handleLogSubmit(entry) {
-    console.log("New log entry:", entry); // ← replace / extend with your DB call
-    onLogSubmit?.(entry);
+    } catch (error) {
+      console.error("Error adding log entry:", error);
+    }
   }
 
   return (
@@ -223,6 +254,14 @@ export default function AquariumCard({ onLogSubmit }) {
           ))}
         </div>
 
+        {/* Notes section */}
+        {tank.filtratie_waarden?.[0]?.notitie && (
+          <div className="notes-section">
+            <h3 className="notes-title">Latest Note</h3>
+            <p className="notes-content">{tank.filtratie_waarden[0].notitie}</p>
+          </div>
+        )}
+
         {/* Footer actions */}
         <div className="card-footer">
           <button
@@ -237,6 +276,8 @@ export default function AquariumCard({ onLogSubmit }) {
         </div>
       </div>
       )}
+
+      {!loading && tank && <PreviousLogsSection logs={tank.filtratie_waarden} range={tank.waarden_range} />}
 
       {modalOpen && (
         <LogEntryModal
