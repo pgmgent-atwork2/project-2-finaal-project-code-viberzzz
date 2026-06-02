@@ -1,6 +1,6 @@
 .maintenance-overview {
   display: grid;
-  grid-template-columns: 2fr 1fr;
+  grid-template-columns: 1fr 1fr;
   gap: 1.5rem;
   margin-top: 2rem;
 }
@@ -10,6 +10,7 @@
   border: 1px solid #dbe3ea;
   border-radius: 12px;
   padding: 1.5rem;
+  margin-top: 2rem;
 }
 
 .overdue-header {
