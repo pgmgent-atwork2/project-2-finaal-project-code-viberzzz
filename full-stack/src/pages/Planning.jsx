@@ -3,6 +3,7 @@ import Calendar from "../components/Planning/Calendar";
 import UpcomingMaintenance from "../components/Planning/UpcomingMaintenance";
 import OverdueTasks from "../components/Planning/OverdueTasks";
 import UpdateOnderhoudModal from "../components/Planning/UpdateOnderhoudModal";
+import NewPlanningEntry from "../components/Planning/NewPlanningEntry";
 import { getOnderhoudItems, updateOnderhoudStatus } from "../api/onderhoud/api.onderhoud.ts";
 import "../css/Planning.css";
 
@@ -77,6 +78,11 @@ const Planning = () => {
     setItems((prev) =>
       prev.map((item) => (item.id === id ? { ...item, status: newStatus } : item)),
     );
+  };
+
+  const handleEntryCreated = async () => {
+    const data = await getOnderhoudItems();
+    if (data) setItems(data);
   };
 
   return (
@@ -175,6 +181,8 @@ const Planning = () => {
           onUpdate={handleUpdateStatus}
         />
       )}
+
+      <NewPlanningEntry onEntryCreated={handleEntryCreated} />
     </main>
   );
 };
