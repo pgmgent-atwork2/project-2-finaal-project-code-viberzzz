@@ -4,17 +4,23 @@ import PHTrendChart from "../components/Reports/PHTrendChart";
 import TemperatureTrendChart from "../components/Reports/TemperatureTrendChart";
 import MaintenanceActivityChart from "../components/Reports/MaintenanceActivityChart";
 import WaterQualityChart from "../components/Reports/WaterQualityChart";
+import "../css/Reports.css";
 
 function Reports() {
   return (
-    <div>
+    <main className="reports-page">
       <ReportsHeader />
       <RecentLogsTable />
-      <PHTrendChart />
-      <TemperatureTrendChart />
-      <MaintenanceActivityChart />
-      <WaterQualityChart />
-    </div>
+      <section className="report-charts" aria-labelledby="charts-heading">
+        <h2 id="charts-heading" className="sr-only">
+          Report Charts
+        </h2>
+        <PHTrendChart />
+        <TemperatureTrendChart />
+        <MaintenanceActivityChart />
+        <WaterQualityChart />
+      </section>
+    </main>
   );
 }
 
