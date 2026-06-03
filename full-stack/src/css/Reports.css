@@ -1,0 +1,12 @@
+.reports-page {
+  padding: 2rem;
+  background: #f7fafb;
+  min-height: 100vh;
+}
+
+.report-charts {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+  margin-top: 24px;
+}
