@@ -1,5 +1,5 @@
-import { useState } from "react";
-
+import { useState, useEffect } from "react";
+import { getAllPhTrend } from "../../api/reports/api.onderhoud.ts";
 import {
   ResponsiveContainer,
   LineChart,
@@ -11,35 +11,47 @@ import {
 } from "recharts";
 import "../../css/PHTrendChart.css";
 
-const phData = {
-  "7days": [
-    { day: "Mon", dolphin: 8.1, seaLions: 7.9, stormPool: 8.2 },
-    { day: "Tue", dolphin: 8.0, seaLions: 7.8, stormPool: 8.1 },
-    { day: "Wed", dolphin: 8.2, seaLions: 8.0, stormPool: 8.3 },
-    { day: "Thu", dolphin: 8.1, seaLions: 7.9, stormPool: 8.2 },
-    { day: "Fri", dolphin: 8.3, seaLions: 8.1, stormPool: 8.4 },
-    { day: "Sat", dolphin: 8.2, seaLions: 8.0, stormPool: 8.3 },
-    { day: "Sun", dolphin: 8.1, seaLions: 7.9, stormPool: 8.2 },
-  ],
-
-  "30days": [
-    { day: "W1", dolphin: 8.0, seaLions: 7.8, stormPool: 8.1 },
-    { day: "W2", dolphin: 8.2, seaLions: 7.9, stormPool: 8.3 },
-    { day: "W3", dolphin: 8.1, seaLions: 8.0, stormPool: 8.2 },
-    { day: "W4", dolphin: 8.3, seaLions: 8.1, stormPool: 8.4 },
-  ],
-
-  "90days": [
-    { day: "Jan", dolphin: 8.0, seaLions: 7.8, stormPool: 8.1 },
-    { day: "Feb", dolphin: 8.1, seaLions: 7.9, stormPool: 8.2 },
-    { day: "Mar", dolphin: 8.3, seaLions: 8.0, stormPool: 8.4 },
-  ],
-};
-
 const PHTrendChart = () => {
   const [range, setRange] = useState("7days");
+  const [chartData, setChartData] = useState([]);
+  const [units, setUnits] = useState([]);
 
-  const currentData = phData[range];
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await getAllPhTrend();
+      if (data && data.length > 0) {
+        // Get unique units for line colors
+        const uniqueUnits = [...new Set(data.map(d => d.unit_naam))];
+        setUnits(uniqueUnits);
+
+        // Filter by date range
+        const now = new Date();
+        const daysMap = { "7days": 7, "30days": 30, "90days": 90 };
+        const days = daysMap[range];
+        const cutoff = new Date(now.getTime() - days * 24 * 60 * 60 * 1000);
+        
+        const filtered = data.filter(d => new Date(d.gemeten_op) >= cutoff);
+
+        // Group by date and pivot by unit
+        const grouped = {};
+        filtered.forEach(item => {
+          const date = new Date(item.gemeten_op);
+          const dateKey = date.toLocaleDateString('nl-NL', { month: 'short', day: 'numeric' });
+          
+          if (!grouped[dateKey]) {
+            grouped[dateKey] = { day: dateKey };
+          }
+          grouped[dateKey][item.unit_naam] = item.ph;
+        });
+
+        setChartData(Object.values(grouped));
+      }
+    };
+    fetchData();
+  }, [range]);
+
+  const colors = ["#2563eb", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6"];
+
   return (
     <section className="chart-card">
       <div className="chart-header">
@@ -58,38 +70,22 @@ const PHTrendChart = () => {
 
       <div className="reports-ph-chart">
         <ResponsiveContainer width="100%" height={300}>
-          <LineChart data={currentData}>
+          <LineChart data={chartData}>
             <CartesianGrid strokeDasharray="3 3" />
-
             <XAxis dataKey="day" tickLine={false} axisLine={false} />
-
             <YAxis domain={[7.5, 8.5]} tickLine={false} axisLine={false} />
-
             <Tooltip />
 
-            <Line
-              type="monotone"
-              dataKey="dolphin"
-              stroke="#2563eb"
-              strokeWidth={3}
-              dot={false}
-            />
-
-            <Line
-              type="monotone"
-              dataKey="seaLions"
-              stroke="#10b981"
-              strokeWidth={3}
-              dot={false}
-            />
-
-            <Line
-              type="monotone"
-              dataKey="stormPool"
-              stroke="#f59e0b"
-              strokeWidth={3}
-              dot={false}
-            />
+            {units.map((unit, index) => (
+              <Line
+                key={unit}
+                type="monotone"
+                dataKey={unit}
+                stroke={colors[index % colors.length]}
+                strokeWidth={3}
+                dot={false}
+              />
+            ))}
           </LineChart>
         </ResponsiveContainer>
       </div>

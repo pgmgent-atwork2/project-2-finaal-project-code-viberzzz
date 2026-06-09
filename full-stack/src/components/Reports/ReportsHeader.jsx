@@ -1,6 +1,37 @@
+import { useState, useEffect } from "react";
+import { getFiltratieUnits } from "../../api/filtratie_unit/api.filtratie_unit.ts";
 import "../../css/ReportsHeader.css";
 
-const ReportsHeader = () => {
+const ReportsHeader = ({ onFilterChange }) => {
+  const [timePeriod, setTimePeriod] = useState("7");
+  const [selectedUnit, setSelectedUnit] = useState("all");
+  const [units, setUnits] = useState([]);
+
+  useEffect(() => {
+    const fetchUnits = async () => {
+      const data = await getFiltratieUnits();
+      if (data) {
+        setUnits(data);
+      }
+    };
+    fetchUnits();
+  }, []);
+
+  useEffect(() => {
+    // Notify parent when filters change
+    if (onFilterChange) {
+      onFilterChange({ timePeriod, selectedUnit });
+    }
+  }, [timePeriod, selectedUnit, onFilterChange]);
+
+  const handleTimePeriodChange = (e) => {
+    setTimePeriod(e.target.value);
+  };
+
+  const handleUnitChange = (e) => {
+    setSelectedUnit(e.target.value);
+  };
+
   return (
     <section className="reports-header">
       <div className="reports-header-left">
@@ -13,17 +44,20 @@ const ReportsHeader = () => {
       </div>
 
       <div className="reports-header-right">
-        <select>
-          <option>Last 7 Days</option>
-          <option>Last 30 Days</option>
-          <option>Last 90 Days</option>
+        <select value={timePeriod} onChange={handleTimePeriodChange}>
+          <option value="7">Last 7 Days</option>
+          <option value="30">Last 30 Days</option>
+          <option value="90">Last 90 Days</option>
+          <option value="all">All Time</option>
         </select>
 
-        <select>
-          <option>All Installations</option>
-          <option>Dolphin Pool A</option>
-          <option>Shark Tank</option>
-          <option>Seal Pool</option>
+        <select value={selectedUnit} onChange={handleUnitChange}>
+          <option value="all">All Installations</option>
+          {units.map((unit) => (
+            <option key={unit.id} value={unit.id}>
+              {unit.naam}
+            </option>
+          ))}
         </select>
 
         <button>Export PDF</button>

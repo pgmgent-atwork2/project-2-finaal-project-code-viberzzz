@@ -1,5 +1,5 @@
-import { useState } from "react";
-
+import { useState, useEffect } from "react";
+import { getWaterniveauTrend } from "../../api/reports/api.onderhoud.ts";
 import {
   ResponsiveContainer,
   LineChart,
@@ -11,39 +11,51 @@ import {
 } from "recharts";
 import "../../css/WaterQualityChart.css";
 
-const waterQualityData = {
-  "7days": [
-    { day: "Mon", turbidity: 0.5, chlorine: 0.6, oxygen: 8.0 },
-    { day: "Tue", turbidity: 0.6, chlorine: 0.6, oxygen: 8.0 },
-    { day: "Wed", turbidity: 0.6, chlorine: 0.5, oxygen: 7.8 },
-    { day: "Thu", turbidity: 0.5, chlorine: 0.5, oxygen: 7.5 },
-    { day: "Fri", turbidity: 0.6, chlorine: 0.6, oxygen: 7.4 },
-    { day: "Sat", turbidity: 0.6, chlorine: 0.6, oxygen: 7.6 },
-    { day: "Sun", turbidity: 0.5, chlorine: 0.5, oxygen: 8.0 },
-  ],
-
-  "30days": [
-    { day: "W1", turbidity: 0.5, chlorine: 0.6, oxygen: 7.8 },
-    { day: "W2", turbidity: 0.6, chlorine: 0.5, oxygen: 7.7 },
-    { day: "W3", turbidity: 0.5, chlorine: 0.6, oxygen: 7.9 },
-    { day: "W4", turbidity: 0.6, chlorine: 0.6, oxygen: 8.0 },
-  ],
-
-  "90days": [
-    { day: "Jan", turbidity: 0.6, chlorine: 0.5, oxygen: 7.6 },
-    { day: "Feb", turbidity: 0.5, chlorine: 0.6, oxygen: 7.8 },
-    { day: "Mar", turbidity: 0.5, chlorine: 0.6, oxygen: 8.0 },
-  ],
-};
-
 const WaterQualityChart = () => {
   const [range, setRange] = useState("7days");
+  const [chartData, setChartData] = useState([]);
+  const [units, setUnits] = useState([]);
 
-  const currentData = waterQualityData[range];
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await getWaterniveauTrend("all");
+      if (data && data.length > 0) {
+        // Get unique units
+        const uniqueUnits = [...new Set(data.map(d => d.unit_naam))];
+        setUnits(uniqueUnits);
+
+        // Filter by date range
+        const now = new Date();
+        const daysMap = { "7days": 7, "30days": 30, "90days": 90 };
+        const days = daysMap[range];
+        const cutoff = new Date(now.getTime() - days * 24 * 60 * 60 * 1000);
+        
+        const filtered = data.filter(d => new Date(d.gemeten_op) >= cutoff);
+
+        // Group by date and pivot by unit
+        const grouped = {};
+        filtered.forEach(item => {
+          const date = new Date(item.gemeten_op);
+          const dateKey = date.toLocaleDateString('nl-NL', { month: 'short', day: 'numeric' });
+          
+          if (!grouped[dateKey]) {
+            grouped[dateKey] = { day: dateKey };
+          }
+          grouped[dateKey][item.unit_naam] = item.waterniveau;
+        });
+
+        setChartData(Object.values(grouped));
+      }
+    };
+    fetchData();
+  }, [range]);
+
+  const colors = ["#2563eb", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6"];
+
   return (
     <section className="water-quality-card">
       <div className="water-quality-header">
-        <h2>Water Quality</h2>
+        <h2>Water Level Trend</h2>
         <select value={range} onChange={(e) => setRange(e.target.value)}>
           <option value="7days">Last 7 Days</option>
           <option value="30days">Last 30 Days</option>
@@ -53,38 +65,22 @@ const WaterQualityChart = () => {
 
       <div className="water-quality-chart-content">
         <ResponsiveContainer width="100%" height={300}>
-          <LineChart data={currentData}>
+          <LineChart data={chartData}>
             <CartesianGrid strokeDasharray="3 3" />
-
             <XAxis dataKey="day" tickLine={false} axisLine={false} />
-
-            <YAxis domain={[7.5, 8.5]} tickLine={false} axisLine={false} />
-
+            <YAxis tickLine={false} axisLine={false} />
             <Tooltip />
 
-            <Line
-              type="monotone"
-              dataKey="turbidity"
-              stroke="#2563eb"
-              strokeWidth={3}
-              dot={false}
-            />
-
-            <Line
-              type="monotone"
-              dataKey="chlorine"
-              stroke="#f59e0b"
-              strokeWidth={3}
-              dot={false}
-            />
-
-            <Line
-              type="monotone"
-              dataKey="oxygen"
-              stroke="#22c55e"
-              strokeWidth={3}
-              dot={false}
-            />
+            {units.map((unit, index) => (
+              <Line
+                key={unit}
+                type="monotone"
+                dataKey={unit}
+                stroke={colors[index % colors.length]}
+                strokeWidth={3}
+                dot={false}
+              />
+            ))}
           </LineChart>
         </ResponsiveContainer>
       </div>

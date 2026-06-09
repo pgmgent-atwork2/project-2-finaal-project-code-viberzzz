@@ -1,5 +1,5 @@
-import { useState } from "react";
-
+import { useState, useEffect } from "react";
+import { getTemperatuurTrend } from "../../api/reports/api.onderhoud.ts";
 import {
   ResponsiveContainer,
   LineChart,
@@ -10,35 +10,47 @@ import {
   CartesianGrid,
 } from "recharts";
 
-const temperatureData = {
-  "7days": [
-    { day: "Mon", dolphin: 14.6, seaLions: 13.8, stormPool: 15.1 },
-    { day: "Tue", dolphin: 14.8, seaLions: 14.0, stormPool: 15.2 },
-    { day: "Wed", dolphin: 14.7, seaLions: 13.9, stormPool: 15.0 },
-    { day: "Thu", dolphin: 14.5, seaLions: 13.7, stormPool: 14.9 },
-    { day: "Fri", dolphin: 14.4, seaLions: 13.6, stormPool: 14.8 },
-    { day: "Sat", dolphin: 14.3, seaLions: 13.5, stormPool: 14.7 },
-    { day: "Sun", dolphin: 14.6, seaLions: 13.8, stormPool: 15.0 },
-  ],
-
-  "30days": [
-    { day: "W1", dolphin: 14.4, seaLions: 13.7, stormPool: 14.9 },
-    { day: "W2", dolphin: 14.6, seaLions: 13.8, stormPool: 15.0 },
-    { day: "W3", dolphin: 14.8, seaLions: 14.0, stormPool: 15.2 },
-    { day: "W4", dolphin: 14.5, seaLions: 13.9, stormPool: 15.1 },
-  ],
-
-  "90days": [
-    { day: "Jan", dolphin: 14.2, seaLions: 13.5, stormPool: 14.8 },
-    { day: "Feb", dolphin: 14.5, seaLions: 13.8, stormPool: 15.0 },
-    { day: "Mar", dolphin: 14.7, seaLions: 14.0, stormPool: 15.2 },
-  ],
-};
-
 const TemperatureTrendChart = () => {
   const [range, setRange] = useState("7days");
+  const [chartData, setChartData] = useState([]);
+  const [units, setUnits] = useState([]);
 
-  const currentData = temperatureData[range];
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await getTemperatuurTrend("all");
+      if (data && data.length > 0) {
+        // Get unique units
+        const uniqueUnits = [...new Set(data.map(d => d.unit_naam))];
+        setUnits(uniqueUnits);
+
+        // Filter by date range
+        const now = new Date();
+        const daysMap = { "7days": 7, "30days": 30, "90days": 90 };
+        const days = daysMap[range];
+        const cutoff = new Date(now.getTime() - days * 24 * 60 * 60 * 1000);
+        
+        const filtered = data.filter(d => new Date(d.gemeten_op) >= cutoff);
+
+        // Group by date and pivot by unit
+        const grouped = {};
+        filtered.forEach(item => {
+          const date = new Date(item.gemeten_op);
+          const dateKey = date.toLocaleDateString('nl-NL', { month: 'short', day: 'numeric' });
+          
+          if (!grouped[dateKey]) {
+            grouped[dateKey] = { day: dateKey };
+          }
+          grouped[dateKey][item.unit_naam] = item.temperatuur;
+        });
+
+        setChartData(Object.values(grouped));
+      }
+    };
+    fetchData();
+  }, [range]);
+
+  const colors = ["#2563eb", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6"];
+
   return (
     <section className="chart-card">
       <div className="chart-header">
@@ -57,38 +69,22 @@ const TemperatureTrendChart = () => {
 
       <div className="reports-ph-chart">
         <ResponsiveContainer width="100%" height={300}>
-          <LineChart data={currentData}>
+          <LineChart data={chartData}>
             <CartesianGrid strokeDasharray="3 3" />
-
             <XAxis dataKey="day" tickLine={false} axisLine={false} />
-
             <YAxis domain={[13, 16]} tickLine={false} axisLine={false} />
-
             <Tooltip />
 
-            <Line
-              type="monotone"
-              dataKey="dolphin"
-              stroke="#2563eb"
-              strokeWidth={3}
-              dot={false}
-            />
-
-            <Line
-              type="monotone"
-              dataKey="seaLions"
-              stroke="#10b981"
-              strokeWidth={3}
-              dot={false}
-            />
-
-            <Line
-              type="monotone"
-              dataKey="stormPool"
-              stroke="#f59e0b"
-              strokeWidth={3}
-              dot={false}
-            />
+            {units.map((unit, index) => (
+              <Line
+                key={unit}
+                type="monotone"
+                dataKey={unit}
+                stroke={colors[index % colors.length]}
+                strokeWidth={3}
+                dot={false}
+              />
+            ))}
           </LineChart>
         </ResponsiveContainer>
       </div>
