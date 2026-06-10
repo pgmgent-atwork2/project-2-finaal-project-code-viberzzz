@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import ReportsHeader from "../components/Reports/ReportsHeader";
 import RecentLogsTable from "../components/Reports/RecentLogsTable";
 import PHTrendChart from "../components/Reports/PHTrendChart";
@@ -13,9 +13,9 @@ function Reports() {
     selectedUnit: "all"
   });
 
-  const handleFilterChange = (newFilters) => {
+  const handleFilterChange = useCallback((newFilters) => {
     setFilters(newFilters);
-  };
+  }, []);
 
   return (
     <main className="reports-page">

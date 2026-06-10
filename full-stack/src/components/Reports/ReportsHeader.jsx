@@ -22,7 +22,7 @@ const ReportsHeader = ({ onFilterChange }) => {
     if (onFilterChange) {
       onFilterChange({ timePeriod, selectedUnit });
     }
-  }, [timePeriod, selectedUnit, onFilterChange]);
+  }, [timePeriod, selectedUnit]); // onFilterChange is now stable (memoized in parent)
 
   const handleTimePeriodChange = (e) => {
     setTimePeriod(e.target.value);

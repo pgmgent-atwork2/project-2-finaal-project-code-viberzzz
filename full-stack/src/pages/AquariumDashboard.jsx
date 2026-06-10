@@ -2,11 +2,12 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { getFiltratieUnits } from "../api/filtratie_unit/api.filtratie_unit.ts";
 import { useAuth } from "../context/auth";
-import { useUnitStatus } from "../hooks/useUnitStatus";
+import { getStatus } from "../components/status.ts";
+import { UNIT_STATUS } from "../types/types.enums.ts";
 import StatCard from "../components/dashboard/StatCard";
-import StatusBadge from "../components/dashboard/StatusBadge";
 import UnitCard from "../components/dashboard/UnitCard";
 import LogModal from "../components/dashboard/LogModal";
+import UnitDetailModal from "../components/dashboard/UnitDetailModal";
 import PhChart from "../components/dashboard/PhChart";
 import "../css/dashboard.css";
 
@@ -16,7 +17,43 @@ export default function AquariumDashboard() {
   const navigate = useNavigate();
   const [user, setuser] = useState(null);
   const { auth } = useAuth();
-  const { getUnitStatus, isValueInRange, isValueExceedsMax } = useUnitStatus();
+
+  // Helper function to get unit status using status.ts
+  const getUnitStatus = (unit) => {
+    if (!unit.latestWaarde) {
+      return "Malfunction";
+    }
+
+    const waarde = unit.latestWaarde;
+    const range = Array.isArray(unit.waarden_range) 
+      ? unit.waarden_range[0] 
+      : unit.waarden_range;
+
+    if (!range) {
+      return "Malfunction";
+    }
+
+    const status = getStatus(
+      waarde.ph,
+      waarde.temperatuur,
+      waarde.water_level,
+      waarde.zoutgehalte,
+      waarde.microbiologie,
+      range
+    );
+
+    // Map enum values to display labels
+    switch (status) {
+      case UNIT_STATUS.ACTIEF:
+        return "Active";
+      case UNIT_STATUS.ONDERHOUD_NODIG:
+        return "Maintenance";
+      case UNIT_STATUS.STORING:
+        return "Malfunction";
+      default:
+        return "Malfunction";
+    }
+  };
 
   const [units, setUnits] = useState([]);
   const [stats, setStats] = useState([
@@ -117,178 +154,12 @@ export default function AquariumDashboard() {
         />
       )}
 
-      {/* ── Unit detail panel (optional future use) ── */}
-      {selectedUnit && (
-        <div className="modal-overlay" onClick={() => setSelectedUnit(null)}>
-          <div className="modal">
-            <h3>{selectedUnit.naam}</h3>
-            <p>{selectedUnit.locatie}</p>
-            <StatusBadge status={selectedUnit.status} />
-            <p style={{ marginTop: 14 }}>
-              Last inspection:{" "}
-              {selectedUnit.latestWaarde?.gemeten_op
-                ? new Date(selectedUnit.latestWaarde.gemeten_op).toLocaleString(
-                    "nl-NL",
-                    {
-                      year: "numeric",
-                      month: "2-digit",
-                      day: "2-digit",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                      hour12: false,
-                    },
-                  )
-                : "N/A"}
-            </p>
-
-            {selectedUnit.waarden_range && (
-              <div
-                style={{
-                  marginTop: 20,
-                  paddingTop: 20,
-                  borderTop: "1px solid #e2e8f0",
-                }}
-              >
-                <h4 style={{ marginBottom: 12 }}>Water Parameters</h4>
-                <div style={{ fontSize: "13px", lineHeight: "1.8" }}>
-                  {(() => {
-                    const range = Array.isArray(selectedUnit.waarden_range)
-                      ? selectedUnit.waarden_range[0]
-                      : selectedUnit.waarden_range;
-                    const waarde = selectedUnit.latestWaarde;
-
-                    const phOutOfRange =
-                      waarde?.ph &&
-                      !isValueInRange(waarde.ph, range.ph_min, range.ph_max);
-                    const tempOutOfRange =
-                      waarde?.temperatuur &&
-                      !isValueInRange(
-                        waarde.temperatuur,
-                        range.temperatuur_min,
-                        range.temperatuur_max,
-                      );
-                    const waterLevelOutOfRange =
-                      waarde?.water_level &&
-                      !isValueInRange(
-                        waarde.water_level,
-                        range.water_level_min,
-                        range.water_level_max,
-                      );
-                    const zoutOutOfRange =
-                      waarde?.zoutgehalte &&
-                      !isValueInRange(
-                        waarde.zoutgehalte,
-                        range.zoutgehalte_min,
-                        range.zoutgehalte_max,
-                      );
-                    const microOutOfRange = isValueExceedsMax(
-                      waarde?.microbiologie,
-                      range.microbiologie_max,
-                    );
-
-                    const getRowStyle = (outOfRange, hasValue) => {
-                      if (!hasValue)
-                        return {
-                          padding: "8px 12px",
-                          borderRadius: "6px",
-                          marginBottom: "8px",
-                        };
-                      if (outOfRange)
-                        return {
-                          padding: "8px 12px",
-                          borderRadius: "6px",
-                          marginBottom: "8px",
-                          background: "#fef3c7",
-                          color: "#d97706",
-                        };
-                      return {
-                        padding: "8px 12px",
-                        borderRadius: "6px",
-                        marginBottom: "8px",
-                        background: "#dcfce7",
-                        color: "#16a34a",
-                      };
-                    };
-
-                    return (
-                      <>
-                        <div
-                          style={getRowStyle(
-                            phOutOfRange,
-                            waarde?.ph !== null && waarde?.ph !== undefined,
-                          )}
-                        >
-                          <strong>pH:</strong> {range.ph_min} - {range.ph_max}{" "}
-                          (Current: {waarde?.ph ?? "N/A"})
-                        </div>
-                        <div
-                          style={getRowStyle(
-                            tempOutOfRange,
-                            waarde?.temperatuur !== null &&
-                              waarde?.temperatuur !== undefined,
-                          )}
-                        >
-                          <strong>Temperatuur:</strong> {range.temperatuur_min}
-                          °C - {range.temperatuur_max}°C (Current:{" "}
-                          {waarde?.temperatuur ?? "N/A"}°C)
-                        </div>
-                        <div
-                          style={getRowStyle(
-                            waterLevelOutOfRange,
-                            waarde?.water_level !== null &&
-                              waarde?.water_level !== undefined,
-                          )}
-                        >
-                          <strong>Water Level:</strong> {range.water_level_min}{" "}
-                          - {range.water_level_max} (Current:{" "}
-                          {waarde?.water_level ?? "N/A"})
-                        </div>
-                        <div
-                          style={getRowStyle(
-                            zoutOutOfRange,
-                            waarde?.zoutgehalte !== null &&
-                              waarde?.zoutgehalte !== undefined,
-                          )}
-                        >
-                          <strong>Zoutgehalte:</strong> {range.zoutgehalte_min}{" "}
-                          - {range.zoutgehalte_max} (Current:{" "}
-                          {waarde?.zoutgehalte ?? "N/A"})
-                        </div>
-                        <div
-                          style={getRowStyle(
-                            microOutOfRange,
-                            waarde?.microbiologie !== null &&
-                              waarde?.microbiologie !== undefined,
-                          )}
-                        >
-                          <strong>Microbiologie Max:</strong>{" "}
-                          {range.microbiologie_max} (Current:{" "}
-                          {waarde?.microbiologie ?? "N/A"})
-                        </div>
-                      </>
-                    );
-                  })()}
-                </div>
-              </div>
-            )}
-
-            <div className="modal-actions" style={{ marginTop: 20 }}>
-              <button
-                className="btn-save"
-                onClick={() => navigate(`/units/${selectedUnit.id}`)}
-              >
-                View Details
-              </button>
-              <button
-                className="btn-cancel"
-                onClick={() => setSelectedUnit(null)}
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* ── Unit detail modal ── */}
+      <UnitDetailModal
+        unit={selectedUnit}
+        onClose={() => setSelectedUnit(null)}
+        onViewDetails={(unit) => navigate(`/units/${unit.id}`)}
+      />
     </>
   );
 }

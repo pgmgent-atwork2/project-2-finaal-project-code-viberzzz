@@ -2,7 +2,11 @@ import { API } from "../././../lib/supabaseClient";
 import { FiltratieUnit } from "../../types/types.filtratie_unit";
 import { FiltratieWaarden } from "../../types/types.filtratie_waarden";
 
-export const getFiltratieUnits = async (): Promise<{}> => {
+export interface FiltratieUnitWithLatestWaarde extends FiltratieUnit {
+  latestWaarde: FiltratieWaarden | null;
+}
+
+export const getFiltratieUnits = async (): Promise<FiltratieUnitWithLatestWaarde[]> => {
   const [{ data: units, error: e1 }, { data: waarden, error: e2 }] =
     await Promise.all([
       API.from("filtratie_unit").select("*, waarden_range(*)"),
@@ -10,7 +14,7 @@ export const getFiltratieUnits = async (): Promise<{}> => {
     ]);
   if (e1 || e2) {
     console.error("Error fetching filtratie units:", e1, e2);
-    return { filtratie_unit: null, filtratie_unit_waarden: null };
+    return [];
   }
   const data = units.map((unit) => {
     const latest =
@@ -27,7 +31,7 @@ export const getFiltratieUnits = async (): Promise<{}> => {
   return data;
 };
 
-export const getFiltratieUnitById = async (id: string): Promise<any> => {
+export const getFiltratieUnitById = async (id: string): Promise<FiltratieUnitWithLatestWaarde | null> => {
   const [{ data: unit, error: e1 }, { data: waarden, error: e2 }] =
     await Promise.all([
       API.from("filtratie_unit")
@@ -47,6 +51,6 @@ export const getFiltratieUnitById = async (id: string): Promise<any> => {
 
   return {
     ...unit,
-    filtratie_waarden: waarden || [],
+    latestWaarde: waarden[0] || null,
   };
 };

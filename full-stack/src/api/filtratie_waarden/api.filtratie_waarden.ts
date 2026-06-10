@@ -1,6 +1,7 @@
 import { API } from "../././../lib/supabaseClient";
 import { FiltratieWaarden } from "../../types/types.filtratie_waarden";
 
+
 export const getFiltratieWaarden = async (): Promise<
   FiltratieWaarden[] | null
 > => {
@@ -17,7 +18,8 @@ export const getFiltratieWaardenByUnitId = async (
 ): Promise<FiltratieWaarden[] | null> => {
   const { data, error } = await API.from("filtratie_waarden")
     .select("*")
-    .eq("unit_id", unitId);
+    .eq("unit_id", unitId)
+    .order("gemeten_op", { ascending: false });
   if (error) {
     console.error("Error fetching filtratie waarden by unit ID:", error);
     return null;
