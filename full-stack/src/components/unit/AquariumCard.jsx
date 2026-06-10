@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams } from 'react-router-dom';
 import { getFiltratieUnitById } from "../../api/filtratie_unit/api.filtratie_unit.ts";
-import { addFiltratieWaarde } from "../../api/filtratie_waarden/api.filtratie_waarden.ts";
+import { addFiltratieWaarde, getFiltratieWaardenByUnitId } from "../../api/filtratie_waarden/api.filtratie_waarden.ts";
 import { useAuth } from "../../context/auth";
 import PreviousLogsSection from "./PreviousLogsSection";
 import "../../css/aquariumCard.css";
@@ -136,6 +136,7 @@ export default function AquariumCard({ onLogSubmit }) {
   const { id } = useParams();
   const { auth } = useAuth();
   const [tank, setTank] = useState();
+  const [allWaarden, setAllWaarden] = useState([]);
   const [loading, setLoading] = useState(!!id);
   const [modalOpen, setModalOpen] = useState(false);
   
@@ -144,17 +145,23 @@ export default function AquariumCard({ onLogSubmit }) {
     if (!id) return;
     
     setLoading(true);
-    const data = await getFiltratieUnitById(id);
-    console.log("Fetched unit data:", data);
-    if (data) {
+    const [unitData, waardenData] = await Promise.all([
+      getFiltratieUnitById(id),
+      getFiltratieWaardenByUnitId(id)
+    ]);
+    
+    console.log("Fetched unit data:", unitData);
+    console.log("Fetched waarden data:", waardenData);
+    
+    if (unitData) {
       // Transform API data to match component structure
-      const latestWaarde = data.filtratie_waarden?.[0];
-      const range = Array.isArray(data.waarden_range) ? data.waarden_range[0] : data.waarden_range;
+      const latestWaarde = unitData.latestWaarde;
+      const range = Array.isArray(unitData.waarden_range) ? unitData.waarden_range[0] : unitData.waarden_range;
 
       const transformedTank = {
-        id: data.id,
-        naam: data.naam,
-        location: data.locatie,
+        id: unitData.id,
+        naam: unitData.naam,
+        location: unitData.locatie,
         status: "active", // Determine based on your status logic
         lastInspection: latestWaarde?.gemeten_op ? new Date(latestWaarde.gemeten_op) : new Date(),
         parameters: range ? [
@@ -164,11 +171,12 @@ export default function AquariumCard({ onLogSubmit }) {
           { key: "Zoutgehalte", value: latestWaarde?.zoutgehalte ?? 0, unit: "ppt",   min: range.zoutgehalte_min, max: range.zoutgehalte_max, decimals: 1 },
           { key: "Microbiologie", value: latestWaarde?.microbiologie ?? 0, unit: "",  min: 0,                     max: range.microbiologie_max, decimals: 2 },
         ] : [],
-        filtratie_waarden: data.filtratie_waarden || [],
+        latestWaarde: latestWaarde,
         waarden_range: range
       };
 
       setTank(transformedTank);
+      setAllWaarden(waardenData || []);
     }
     setLoading(false);
   };
@@ -255,10 +263,10 @@ export default function AquariumCard({ onLogSubmit }) {
         </div>
 
         {/* Notes section */}
-        {tank.filtratie_waarden?.[0]?.notitie && (
+        {tank.latestWaarde?.notitie && (
           <div className="notes-section">
             <h3 className="notes-title">Latest Note</h3>
-            <p className="notes-content">{tank.filtratie_waarden[0].notitie}</p>
+            <p className="notes-content">{tank.latestWaarde.notitie}</p>
           </div>
         )}
 
@@ -277,7 +285,7 @@ export default function AquariumCard({ onLogSubmit }) {
       </div>
       )}
 
-      {!loading && tank && <PreviousLogsSection logs={tank.filtratie_waarden} range={tank.waarden_range} />}
+      {!loading && tank && <PreviousLogsSection logs={allWaarden} range={tank.waarden_range} />}
 
       {modalOpen && (
         <LogEntryModal
