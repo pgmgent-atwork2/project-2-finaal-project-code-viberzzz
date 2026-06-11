@@ -10,8 +10,12 @@ import "../css/Reports.css";
 function Reports() {
   const [filters, setFilters] = useState({
     timePeriod: "7",
-    selectedUnit: "all"
+    selectedUnit: "all",
   });
+
+  const [filteredLogs, setFilteredLogs] = useState([]);
+
+  console.log("Filtered Logs:", filteredLogs);
 
   const handleFilterChange = useCallback((newFilters) => {
     setFilters(newFilters);
@@ -20,7 +24,7 @@ function Reports() {
   return (
     <main className="reports-page">
       <ReportsHeader onFilterChange={handleFilterChange} />
-      <RecentLogsTable filters={filters} />
+      <RecentLogsTable filters={filters} onLogsFiltered={setFilteredLogs} />
       <section className="report-charts" aria-labelledby="charts-heading">
         <h2 id="charts-heading" className="sr-only">
           Report Charts
