@@ -5,6 +5,8 @@ import PHTrendChart from "../components/Reports/PHTrendChart";
 import TemperatureTrendChart from "../components/Reports/TemperatureTrendChart";
 import MaintenanceActivityChart from "../components/Reports/MaintenanceActivityChart";
 import WaterQualityChart from "../components/Reports/WaterQualityChart";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 import "../css/Reports.css";
 
 function Reports() {
@@ -19,9 +21,17 @@ function Reports() {
     setFilters(newFilters);
   }, []);
 
+  const handleExportPdf = () => {
+    console.log("Exporting PDF...");
+    console.log(filteredLogs);
+  };
+
   return (
     <main className="reports-page">
-      <ReportsHeader onFilterChange={handleFilterChange} />
+      <ReportsHeader
+        onFilterChange={handleFilterChange}
+        onExportPdf={handleExportPdf}
+      />{" "}
       <RecentLogsTable filters={filters} onLogsFiltered={setFilteredLogs} />
       <section className="report-charts" aria-labelledby="charts-heading">
         <h2 id="charts-heading" className="sr-only">
