@@ -15,8 +15,6 @@ function Reports() {
 
   const [filteredLogs, setFilteredLogs] = useState([]);
 
-  console.log("Filtered Logs:", filteredLogs);
-
   const handleFilterChange = useCallback((newFilters) => {
     setFilters(newFilters);
   }, []);
