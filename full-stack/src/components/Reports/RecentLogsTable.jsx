@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { getRapporten } from "../../api/reports/api.onderhoud.ts";
 import "../../css/RecentLogsTable.css";
 
-const RecentLogsTable = ({ filters }) => {
+const RecentLogsTable = ({ filters, onLogsFiltered }) => {
   const [logs, setLogs] = useState([]);
   const [filteredLogs, setFilteredLogs] = useState([]);
 
@@ -25,48 +25,56 @@ const RecentLogsTable = ({ filters }) => {
       const daysAgo = parseInt(filters.timePeriod);
       const cutoffDate = new Date();
       cutoffDate.setDate(cutoffDate.getDate() - daysAgo);
-      
-      filtered = filtered.filter(log => 
-        new Date(log.gemaakt_op) >= cutoffDate
+
+      filtered = filtered.filter(
+        (log) => new Date(log.gemaakt_op) >= cutoffDate,
       );
     }
 
     // Filter by unit
     if (filters.selectedUnit !== "all") {
-      filtered = filtered.filter(log => log.unit_id === filters.selectedUnit);
+      filtered = filtered.filter((log) => log.unit_id === filters.selectedUnit);
     }
 
+    console.log("Sending filtered logs:", filtered.length);
+
     setFilteredLogs(filtered);
+
+    if (onLogsFiltered) {
+      onLogsFiltered(filtered);
+    }
   }, [logs, filters]);
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
-    return date.toLocaleString('nl-NL', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit'
+    return date.toLocaleString("nl-NL", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   };
 
   const getStatusClass = (status) => {
-    switch(status) {
-      case 'actief':
-        return 'ok';
-      case 'onderhoud_nodig':
-        return 'warning';
-      case 'storing':
-        return 'critical';
+    switch (status) {
+      case "actief":
+        return "ok";
+      case "onderhoud_nodig":
+        return "warning";
+      case "storing":
+        return "critical";
       default:
-        return '';
+        return "";
     }
   };
 
   return (
     <section className="logs-card">
       <h2>Recent Logs</h2>
-      <p className="logs-subtitle">Latest sensor and technician readings ({filteredLogs.length} logs)</p>
+      <p className="logs-subtitle">
+        Latest sensor and technician readings ({filteredLogs.length} logs)
+      </p>
 
       <table className="logs-table">
         <thead>
@@ -86,7 +94,9 @@ const RecentLogsTable = ({ filters }) => {
         <tbody>
           {filteredLogs.length === 0 ? (
             <tr>
-              <td colSpan="10" style={{ textAlign: 'center' }}>Geen logs beschikbaar</td>
+              <td colSpan="10" style={{ textAlign: "center" }}>
+                Geen logs beschikbaar
+              </td>
             </tr>
           ) : (
             filteredLogs.map((log) => (
@@ -98,13 +108,15 @@ const RecentLogsTable = ({ filters }) => {
                 <td>{log.microbiologie.toFixed(1)}</td>
                 <td>{log.zoutgehalte.toFixed(2)}</td>
                 <td>
-                  <span className={`status-badge ${getStatusClass(log.status)}`}>
+                  <span
+                    className={`status-badge ${getStatusClass(log.status)}`}
+                  >
                     {log.status}
                   </span>
                 </td>
                 <td>{formatDate(log.gemaakt_op)}</td>
-                <td>{log.technicus?.naam || 'Onbekend'}</td>
-                <td>{log.notities || '-'}</td>
+                <td>{log.technicus?.naam || "Onbekend"}</td>
+                <td>{log.notities || "-"}</td>
               </tr>
             ))
           )}
