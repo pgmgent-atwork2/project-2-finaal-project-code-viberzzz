@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { getFiltratieUnits } from "../../api/filtratie_unit/api.filtratie_unit.ts";
 import "../../css/ReportsHeader.css";
 
-const ReportsHeader = ({ onFilterChange }) => {
+const ReportsHeader = ({ onFilterChange, onExportPdf }) => {
   const [timePeriod, setTimePeriod] = useState("7");
   const [selectedUnit, setSelectedUnit] = useState("all");
   const [units, setUnits] = useState([]);
@@ -60,7 +60,7 @@ const ReportsHeader = ({ onFilterChange }) => {
           ))}
         </select>
 
-        <button>Export PDF</button>
+        <button onClick={onExportPdf}>Export PDF</button>
       </div>
     </section>
   );

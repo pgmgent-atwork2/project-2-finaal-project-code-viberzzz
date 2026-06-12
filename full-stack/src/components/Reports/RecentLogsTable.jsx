@@ -36,8 +36,6 @@ const RecentLogsTable = ({ filters, onLogsFiltered }) => {
       filtered = filtered.filter((log) => log.unit_id === filters.selectedUnit);
     }
 
-    console.log("Sending filtered logs:", filtered.length);
-
     setFilteredLogs(filtered);
 
     if (onLogsFiltered) {
