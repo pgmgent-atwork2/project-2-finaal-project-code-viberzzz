@@ -22,8 +22,45 @@ function Reports() {
   }, []);
 
   const handleExportPdf = () => {
-    console.log("Exporting PDF...");
-    console.log(filteredLogs);
+    const doc = new jsPDF();
+
+    doc.setFontSize(18);
+    doc.text("Seapark Reports Export", 14, 20);
+
+    doc.setFontSize(11);
+    doc.text(`Generated: ${new Date().toLocaleString()}`, 14, 30);
+
+    autoTable(doc, {
+      startY: 40,
+
+      head: [
+        [
+          "Unit",
+          "pH",
+          "Temp",
+          "Water",
+          "Micro",
+          "Salt",
+          "Status",
+          "Date",
+          "Technician",
+        ],
+      ],
+
+      body: filteredLogs.map((log) => [
+        log.titel,
+        log.ph.toFixed(1),
+        log.temperatuur.toFixed(1),
+        log.waterniveau.toFixed(1),
+        log.microbiologie.toFixed(1),
+        log.zoutgehalte.toFixed(2),
+        log.status,
+        new Date(log.gemaakt_op).toLocaleString("nl-BE"),
+        log.technicus?.naam || "Unknown",
+      ]),
+    });
+
+    doc.save("seapark-report.pdf");
   };
 
   return (
@@ -34,7 +71,7 @@ function Reports() {
       />{" "}
       <RecentLogsTable filters={filters} onLogsFiltered={setFilteredLogs} />
       <section className="report-charts" aria-labelledby="charts-heading">
-        <h2 id="charts-heading" className="sr-only">
+        <h2 id="charts-heading" className="charts-heading">
           Report Charts
         </h2>
         <PHTrendChart />
