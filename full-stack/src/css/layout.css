@@ -1,8 +1,16 @@
 main {
   flex: 1;
+  min-width: 0;
 }
 
 .box {
   display: flex;
   min-height: 100vh;
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .box {
+    flex-direction: column;
+  }
 }

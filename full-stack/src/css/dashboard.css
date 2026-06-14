@@ -7,7 +7,9 @@ font-family: 'DM Sans', sans-serif;
 background: #f0f4f8;
 min-height: 100vh;
 height: 100%;
-width: 90vw;
+width: 100%;
+max-width: 100%;
+overflow-x: hidden;
 flex: 1;
 padding: 32px 40px;
 color: #1e293b;
@@ -217,11 +219,48 @@ background: #fff;
 .btn-cancel:hover { background: #0e7490; }
 
 @media (max-width: 900px) {
-.stats-row    { grid-template-columns: repeat(2, 1fr); }
-.units-grid   { grid-template-columns: repeat(2, 1fr); }
+  .stats-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .units-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .topbar {
+    flex-direction: column;
+    gap: 16px;
+  }
 }
+
 @media (max-width: 580px) {
-.dash-root  { padding: 20px 16px; }
-.stats-row  { grid-template-columns: repeat(2, 1fr); }
-.units-grid { grid-template-columns: 1fr; }
+  .dash-root {
+    padding: 20px 16px;
+  }
+
+  .stats-row {
+    grid-template-columns: 1fr;
+  }
+
+  .units-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .stat-card {
+    padding: 16px;
+  }
+
+  .modal {
+    width: calc(100% - 32px);
+    padding: 20px;
+  }
+
+  .modal-actions {
+    flex-direction: column;
+  }
+
+  .btn-save,
+  .btn-cancel {
+    width: 100%;
+  }
 }
