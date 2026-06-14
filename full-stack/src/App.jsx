@@ -10,6 +10,7 @@ import Units from "./pages/Units";
 import Unit from "./pages/Unit";
 import SupabaseTest from "./pages/supabaseTest";
 import AquariumDashboard from "./pages/AquariumDashboard";
+import ResetPassword from "./pages/ResetPassword";
 import "./App.css";
 
 function App() {
@@ -19,6 +20,7 @@ function App() {
         <Routes>
           {/* Public Auth Routes */}
           <Route path="/login" element={<Login />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
 
           {/* Protected Routes with Layout (includes navbar) */}
           <Route
@@ -37,7 +39,7 @@ function App() {
             element={
               <ProtectedRoute>
                 <Layout>
-                  <Unit/>
+                  <Unit />
                 </Layout>
               </ProtectedRoute>
             }
@@ -69,9 +71,9 @@ function App() {
             path="/reports"
             element={
               // <ProtectedRoute>
-                <Layout>
-                  <Reports />
-                </Layout>
+              <Layout>
+                <Reports />
+              </Layout>
               // </ProtectedRoute>
             }
           />
