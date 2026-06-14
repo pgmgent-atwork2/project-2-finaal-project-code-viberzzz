@@ -8,6 +8,9 @@ const ResetPassword = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
+  const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
+
   useEffect(() => {
     async function checkSession() {
       const { data, error } = await API.auth.getSession();
@@ -18,6 +21,22 @@ const ResetPassword = () => {
 
     checkSession();
   }, []);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    let newErrors = {};
+
+    if (password.length < 4) {
+      newErrors.password = "Password must be at least 4 characters.";
+    }
+
+    if (password !== confirmPassword) {
+      newErrors.confirmPassword = "Passwords do not match.";
+    }
+
+    setErrors(newErrors);
+  };
   return (
     <div className="container">
       <div className="left">
@@ -48,17 +67,7 @@ const ResetPassword = () => {
 
           <p className="subtitle">Enter and confirm your new password.</p>
 
-          <form>
-            <div className="form-group">
-              <label>New Password</label>
-
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </div>
-
+          <form onSubmit={handleSubmit}>
             <div className="form-group">
               <label>Confirm Password</label>
 
@@ -67,6 +76,20 @@ const ResetPassword = () => {
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
               />
+
+              <span className="error">{errors.confirmPassword}</span>
+            </div>
+
+            <div className="form-group">
+              <label>New Password</label>
+
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+
+              <span className="error">{errors.password}</span>
             </div>
 
             <button type="submit" className="primary-btn">
