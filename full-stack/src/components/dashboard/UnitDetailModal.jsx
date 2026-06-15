@@ -1,12 +1,18 @@
 import StatusBadge from "./StatusBadge";
 import WaterParameters from "./WaterParameters";
 
-const UnitDetailModal = ({ unit, onClose, onViewDetails }) => {
+const UnitDetailModal = ({ unit, onClose, onViewDetails, onDelete, isAdmin }) => {
   if (!unit) return null;
 
   const range = Array.isArray(unit.waarden_range)
     ? unit.waarden_range[0]
     : unit.waarden_range;
+
+  const handleDelete = () => {
+    if (window.confirm(`Weet je zeker dat je "${unit.naam}" wilt verwijderen? Dit kan niet ongedaan worden gemaakt.`)) {
+      onDelete(unit.id);
+    }
+  };
 
   return (
     <div className="modal-overlay" onClick={onClose}>
@@ -34,6 +40,27 @@ const UnitDetailModal = ({ unit, onClose, onViewDetails }) => {
           <button className="btn-save" onClick={() => onViewDetails(unit)}>
             View Details
           </button>
+          {isAdmin && (
+            <button 
+              className="btn-delete" 
+              onClick={handleDelete}
+              style={{
+                background: "#dc2626",
+                color: "white",
+                border: "none",
+                padding: "0.5rem 1rem",
+                borderRadius: "6px",
+                cursor: "pointer",
+                fontSize: "0.875rem",
+                fontWeight: "500",
+                transition: "all 0.2s"
+              }}
+              onMouseOver={(e) => e.target.style.background = "#b91c1c"}
+              onMouseOut={(e) => e.target.style.background = "#dc2626"}
+            >
+              Delete Unit
+            </button>
+          )}
           <button className="btn-cancel" onClick={onClose}>
             Close
           </button>

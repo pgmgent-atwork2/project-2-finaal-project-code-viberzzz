@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { getFiltratieUnits } from "../api/filtratie_unit/api.filtratie_unit.ts";
+import { getFiltratieUnits, deleteFiltratieUnit } from "../api/filtratie_unit/api.filtratie_unit.ts";
 import { useAuth } from "../context/auth";
 import { getStatus } from "../components/status.ts";
 import { UNIT_STATUS } from "../types/types.enums.ts";
@@ -109,6 +109,19 @@ export default function AquariumDashboard() {
     setUnits(data || []);
   };
 
+  const handleDeleteUnit = async (unitId) => {
+    const success = await deleteFiltratieUnit(unitId);
+    if (success) {
+      console.log("Unit deleted successfully");
+      setSelectedUnit(null);
+      // Refresh units list
+      const data = await getFiltratieUnits();
+      setUnits(data || []);
+    } else {
+      alert("Fout bij het verwijderen van de unit");
+    }
+  };
+
   const isAdmin = auth?.user?.rol === "admin";
 
   return (
@@ -173,6 +186,8 @@ export default function AquariumDashboard() {
         unit={selectedUnit}
         onClose={() => setSelectedUnit(null)}
         onViewDetails={(unit) => navigate(`/units/${unit.id}`)}
+        onDelete={handleDeleteUnit}
+        isAdmin={isAdmin}
       />
 
       {/* ── Create filtratie unit form ── */}

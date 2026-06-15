@@ -136,3 +136,17 @@ export const createFiltratieUnit = async (unitData: CreateFiltratieUnitInput): P
     waardenRange: rangeData
   };
 }
+
+export const deleteFiltratieUnit = async (id: string): Promise<boolean> => {
+  // The waarden_range will be automatically deleted due to ON DELETE CASCADE
+  const { error } = await API.from("filtratie_unit")
+    .delete()
+    .eq("id", id);
+
+  if (error) {
+    console.error("Error deleting filtratie unit:", error);
+    return false;
+  }
+
+  return true;
+}
