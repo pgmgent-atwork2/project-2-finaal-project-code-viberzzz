@@ -19,3 +19,13 @@
   white-space: nowrap;
   border: 0;
 }
+
+@media (max-width: 900px) {
+  .reports-page {
+    padding: 1rem;
+  }
+
+  .report-charts {
+    grid-template-columns: 1fr;
+  }
+}

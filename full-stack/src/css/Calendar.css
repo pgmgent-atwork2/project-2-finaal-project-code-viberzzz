@@ -117,3 +117,23 @@
 .task-card--skipped h4 {
   color: #6b7280;
 }
+
+@media (max-width: 768px) {
+  .calendar-container {
+    overflow-x: auto;
+  }
+
+  .calendar-header {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .weekdays-row,
+  .calendar-grid {
+    min-width: 700px;
+  }
+
+  .calendar-day {
+    min-height: 250px;
+  }
+}

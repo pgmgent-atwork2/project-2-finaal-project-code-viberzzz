@@ -41,3 +41,13 @@
   background: #fee2e2;
   color: #dc2626;
 }
+
+@media (max-width: 768px) {
+  .logs-card {
+    overflow-x: auto;
+  }
+
+  .logs-table {
+    min-width: 700px;
+  }
+}
