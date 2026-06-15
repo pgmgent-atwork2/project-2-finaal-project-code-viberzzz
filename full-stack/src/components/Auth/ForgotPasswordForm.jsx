@@ -27,6 +27,7 @@ const ForgotPasswordForm = () => {
 
     try {
       await forgotPassword(email);
+      setSuccess(true);
     } catch (error) {
       console.error(error);
     } finally {
@@ -74,8 +75,9 @@ const ForgotPasswordForm = () => {
             <span className="error">{errors.email}</span>
           </div>
 
-          <button type="submit" className="primary-btn">
-            Send Recovery Email
+          {success && <p>Recovery email sent successfully.</p>}
+          <button type="submit" disabled={loading} className="primary-btn">
+            {loading ? "Sending..." : "Send Recovery Email"}
           </button>
         </form>
       </div>
