@@ -66,6 +66,7 @@ export default function AquariumDashboard() {
   const [showModal, setShowModal] = useState(false);
   const [showCreateUnitForm, setShowCreateUnitForm] = useState(false);
   const [selectedUnit, setSelectedUnit] = useState(null);
+  const [editUnit, setEditUnit] = useState(null);
 
   // Fetch units on mount
   useEffect(() => {
@@ -101,12 +102,20 @@ export default function AquariumDashboard() {
     ]);
   }, [units]);
 
-  const handleUnitCreated = async (newUnit) => {
-    console.log("New unit created:", newUnit);
+  const handleUnitSaved = async (savedUnit) => {
+    console.log("Unit saved:", savedUnit);
     setShowCreateUnitForm(false);
+    setEditUnit(null);
+    setSelectedUnit(null);
     // Refresh units list
     const data = await getFiltratieUnits();
     setUnits(data || []);
+  };
+
+  const handleEditUnit = (unit) => {
+    setEditUnit(unit);
+    setShowCreateUnitForm(true);
+    setSelectedUnit(null);
   };
 
   const handleDeleteUnit = async (unitId) => {
@@ -120,6 +129,11 @@ export default function AquariumDashboard() {
     } else {
       alert("Fout bij het verwijderen van de unit");
     }
+  };
+
+  const handleCancelForm = () => {
+    setShowCreateUnitForm(false);
+    setEditUnit(null);
   };
 
   const isAdmin = auth?.user?.rol === "admin";
@@ -187,14 +201,16 @@ export default function AquariumDashboard() {
         onClose={() => setSelectedUnit(null)}
         onViewDetails={(unit) => navigate(`/units/${unit.id}`)}
         onDelete={handleDeleteUnit}
+        onEdit={handleEditUnit}
         isAdmin={isAdmin}
       />
 
-      {/* ── Create filtratie unit form ── */}
+      {/* ── Create/Edit filtratie unit form ── */}
       {showCreateUnitForm && isAdmin && (
         <CreateFiltratieUnitForm
-          onSuccess={handleUnitCreated}
-          onCancel={() => setShowCreateUnitForm(false)}
+          onSuccess={handleUnitSaved}
+          onCancel={handleCancelForm}
+          editUnit={editUnit}
         />
       )}
     </>
