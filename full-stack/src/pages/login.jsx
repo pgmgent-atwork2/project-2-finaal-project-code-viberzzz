@@ -165,6 +165,19 @@ const Login = () => {
               <span className="error">{errors.email}</span>
             </div>
 
+            {!isSignUp && (
+              <p
+                onClick={() => navigate("/forgot-password")}
+                style={{
+                  cursor: "pointer",
+                  marginBottom: "1rem",
+                  textAlign: "right",
+                }}
+              >
+                Forgot Password?
+              </p>
+            )}
+
             {/* PASSWORD */}
             <div className="form-group">
               <label>Password</label>

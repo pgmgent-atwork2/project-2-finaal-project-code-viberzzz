@@ -80,3 +80,15 @@ export const login = async ({ email, password }) => {
 export const logout = async () => {
   return API.auth.signOut();
 };
+
+export const forgotPassword = async (email) => {
+  const { data, error } = await API.auth.resetPasswordForEmail(email, {
+    redirectTo: "http://localhost:3000/reset-password",
+  });
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
+};
