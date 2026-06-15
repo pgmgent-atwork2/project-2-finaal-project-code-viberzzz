@@ -10,6 +10,7 @@ const ResetPassword = () => {
 
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
 
   useEffect(() => {
     async function checkSession() {
@@ -22,13 +23,13 @@ const ResetPassword = () => {
     checkSession();
   }, []);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     let newErrors = {};
 
-    if (password.length < 4) {
-      newErrors.password = "Password must be at least 4 characters.";
+    if (password.length < 8) {
+      newErrors.password = "Password must be at least 8 characters.";
     }
 
     if (password !== confirmPassword) {
@@ -36,6 +37,28 @@ const ResetPassword = () => {
     }
 
     setErrors(newErrors);
+
+    if (Object.keys(newErrors).length === 0) {
+      setLoading(true);
+
+      try {
+        const { error } = await API.auth.updateUser({
+          password,
+        });
+
+        if (error) {
+          throw error;
+        }
+
+        setSuccess(true);
+      } catch (error) {
+        setErrors({
+          general: error.message,
+        });
+      } finally {
+        setLoading(false);
+      }
+    }
   };
   return (
     <div className="container">
@@ -69,6 +92,19 @@ const ResetPassword = () => {
 
           <form onSubmit={handleSubmit}>
             <div className="form-group">
+              <label>New Password</label>
+
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+
+              <span className="error">{errors.password}</span>
+              <span className="error">{errors.general}</span>
+            </div>
+
+            <div className="form-group">
               <label>Confirm Password</label>
 
               <input
@@ -80,20 +116,10 @@ const ResetPassword = () => {
               <span className="error">{errors.confirmPassword}</span>
             </div>
 
-            <div className="form-group">
-              <label>New Password</label>
+            {success && <p>Password updated successfully.</p>}
 
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-
-              <span className="error">{errors.password}</span>
-            </div>
-
-            <button type="submit" className="primary-btn">
-              Save Password
+            <button type="submit" className="primary-btn" disabled={loading}>
+              {loading ? "Saving..." : "Save Password"}
             </button>
           </form>
         </div>
