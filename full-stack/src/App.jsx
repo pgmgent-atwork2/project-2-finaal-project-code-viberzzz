@@ -11,6 +11,7 @@ import Unit from "./pages/Unit";
 import SupabaseTest from "./pages/supabaseTest";
 import AquariumDashboard from "./pages/AquariumDashboard";
 import ResetPassword from "./pages/ResetPassword";
+import ForgotPassword from "./pages/ForgotPassword";
 import "./App.css";
 
 function App() {
@@ -21,6 +22,7 @@ function App() {
           {/* Public Auth Routes */}
           <Route path="/login" element={<Login />} />
           <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
 
           {/* Protected Routes with Layout (includes navbar) */}
           <Route
