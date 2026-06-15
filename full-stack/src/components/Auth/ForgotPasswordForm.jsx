@@ -1,3 +1,4 @@
+import { forgotPassword } from "../../api/authApi";
 import { useState } from "react";
 
 import "../../css/reset.css";
@@ -5,6 +6,35 @@ import "../../css/styleLogin.css";
 
 const ForgotPasswordForm = () => {
   const [email, setEmail] = useState("");
+  const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    let newErrors = {};
+
+    if (!email.includes("@")) {
+      newErrors.email = "Invalid email.";
+    }
+
+    setErrors(newErrors);
+
+    if (Object.keys(newErrors).length === 0) {
+      setLoading(true);
+    }
+
+    try {
+      await forgotPassword(email);
+      setSuccess(true);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="container">
       <div className="left">
@@ -33,7 +63,7 @@ const ForgotPasswordForm = () => {
           <p className="subtitle">Enter your email address below.</p>
         </div>
 
-        <form>
+        <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label>Email</label>
 
@@ -42,10 +72,12 @@ const ForgotPasswordForm = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
+            <span className="error">{errors.email}</span>
           </div>
 
-          <button type="submit" className="primary-btn">
-            Send Recovery Email
+          {success && <p>Recovery email sent successfully.</p>}
+          <button type="submit" disabled={loading} className="primary-btn">
+            {loading ? "Sending..." : "Send Recovery Email"}
           </button>
         </form>
       </div>
