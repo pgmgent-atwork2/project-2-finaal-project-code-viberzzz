@@ -1,9 +1,21 @@
 import { API } from "../././../lib/supabaseClient";
 import { FiltratieUnit } from "../../types/types.filtratie_unit";
 import { FiltratieWaarden } from "../../types/types.filtratie_waarden";
+import { WaardenRange, WaardenRangeInsert, WaardenRangeUpdate } from "../../types/types.waarden_range";
+import { createWaardenRange, updateWaardenRange } from "../waarden_range/api.waarden_range.ts";
 
 export interface FiltratieUnitWithLatestWaarde extends FiltratieUnit {
   latestWaarde: FiltratieWaarden | null;
+}
+export interface FiltratieUnitMetWaardenRange extends FiltratieUnit {
+  waardenRange: WaardenRange | null;
+}
+
+export interface CreateFiltratieUnitInput {
+  naam: string;
+  locatie: string;
+  status?: string;
+  waardenRange?: Omit<WaardenRangeInsert, "unit_id">;
 }
 
 export const getFiltratieUnits = async (): Promise<FiltratieUnitWithLatestWaarde[]> => {
@@ -54,3 +66,73 @@ export const getFiltratieUnitById = async (id: string): Promise<FiltratieUnitWit
     latestWaarde: waarden[0] || null,
   };
 };
+export const filtratieUnitUpdate = async (id: string, updates: Partial<FiltratieUnitMetWaardenRange>): Promise<FiltratieUnitMetWaardenRange | null> => { 
+  // Separate waarden_range data from filtratie_unit data
+  const { waardenRange, ...unitUpdates } = updates;
+  
+  // Update filtratie_unit
+  const { data: unitData, error: unitError } = await API.from("filtratie_unit")
+    .update(unitUpdates)
+    .eq("id", id)
+    .select()
+    .single();
+
+  if (unitError) {
+    console.error("Error updating filtratie unit:", unitError);
+    return null;
+  }
+
+  // Update waarden_range if provided
+  let rangeData = null;
+  if (waardenRange) {
+    rangeData = await updateWaardenRange(id, waardenRange as WaardenRangeUpdate);
+    if (!rangeData) {
+      console.error("Failed to update waarden range");
+    }
+  } else {
+    // Fetch existing waarden_range
+    const { data: existingRange } = await API.from("waarden_range")
+      .select("*")
+      .eq("unit_id", id)
+      .single();
+    rangeData = existingRange;
+  }
+
+  return {
+    ...unitData,
+    waardenRange: rangeData
+  };
+}
+export const createFiltratieUnit = async (unitData: CreateFiltratieUnitInput): Promise<FiltratieUnitMetWaardenRange | null> => {
+  // Separate waarden_range data from filtratie_unit data
+  const { waardenRange, ...unitFields } = unitData;
+
+  // Create filtratie_unit first
+  const { data: newUnit, error: unitError } = await API.from("filtratie_unit")
+    .insert(unitFields)
+    .select()
+    .single();
+
+  if (unitError) {
+    console.error("Error creating filtratie unit:", unitError);
+    return null;
+  }
+
+  // Create waarden_range if provided
+  let rangeData = null;
+  if (waardenRange) {
+    rangeData = await createWaardenRange({
+      ...waardenRange,
+      unit_id: newUnit.id
+    } as WaardenRangeInsert);
+    
+    if (!rangeData) {
+      console.error("Failed to create waarden range for new unit");
+    }
+  }
+
+  return {
+    ...newUnit,
+    waardenRange: rangeData
+  };
+}

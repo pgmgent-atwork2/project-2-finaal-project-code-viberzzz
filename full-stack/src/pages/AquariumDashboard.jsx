@@ -9,6 +9,7 @@ import UnitCard from "../components/dashboard/UnitCard";
 import LogModal from "../components/dashboard/LogModal";
 import UnitDetailModal from "../components/dashboard/UnitDetailModal";
 import PhChart from "../components/dashboard/PhChart";
+import CreateFiltratieUnitForm from "../components/Admin/CreateFiltratieUnitForm";
 import "../css/dashboard.css";
 
 // ── Main dashboard ─────────────────────────────────────────────────────────
@@ -63,6 +64,7 @@ export default function AquariumDashboard() {
     { label: "Logs today", value: 0, icon: "📋" },
   ]);
   const [showModal, setShowModal] = useState(false);
+  const [showCreateUnitForm, setShowCreateUnitForm] = useState(false);
   const [selectedUnit, setSelectedUnit] = useState(null);
 
   // Fetch units on mount
@@ -99,6 +101,16 @@ export default function AquariumDashboard() {
     ]);
   }, [units]);
 
+  const handleUnitCreated = async (newUnit) => {
+    console.log("New unit created:", newUnit);
+    setShowCreateUnitForm(false);
+    // Refresh units list
+    const data = await getFiltratieUnits();
+    setUnits(data || []);
+  };
+
+  const isAdmin = auth?.user?.rol === "admin";
+
   return (
     <>
       <div className="dash-root">
@@ -108,9 +120,11 @@ export default function AquariumDashboard() {
             <h1>Welcome, {user?.naam}</h1>
             <p>Here's the state of the park's life support today.</p>
           </div>
-          <button className="btn-log" onClick={() => setShowModal(true)}>
-            + Log entry
-          </button>
+          {isAdmin && (
+            <button className="btn-log" onClick={() => setShowCreateUnitForm(true)}>
+              + Nieuwe Filtratie Unit
+            </button>
+          )}
         </div>
 
         {/* ── Stats ── */}
@@ -160,6 +174,14 @@ export default function AquariumDashboard() {
         onClose={() => setSelectedUnit(null)}
         onViewDetails={(unit) => navigate(`/units/${unit.id}`)}
       />
+
+      {/* ── Create filtratie unit form ── */}
+      {showCreateUnitForm && isAdmin && (
+        <CreateFiltratieUnitForm
+          onSuccess={handleUnitCreated}
+          onCancel={() => setShowCreateUnitForm(false)}
+        />
+      )}
     </>
   );
 }
