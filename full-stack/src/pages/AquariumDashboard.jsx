@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { getFiltratieUnits } from "../api/filtratie_unit/api.filtratie_unit.ts";
+import { getFiltratieUnits, deleteFiltratieUnit } from "../api/filtratie_unit/api.filtratie_unit.ts";
 import { useAuth } from "../context/auth";
 import { getStatus } from "../components/status.ts";
 import { UNIT_STATUS } from "../types/types.enums.ts";
@@ -9,6 +9,7 @@ import UnitCard from "../components/dashboard/UnitCard";
 import LogModal from "../components/dashboard/LogModal";
 import UnitDetailModal from "../components/dashboard/UnitDetailModal";
 import PhChart from "../components/dashboard/PhChart";
+import CreateFiltratieUnitForm from "../components/Admin/CreateFiltratieUnitForm";
 import "../css/dashboard.css";
 
 // ── Main dashboard ─────────────────────────────────────────────────────────
@@ -63,7 +64,9 @@ export default function AquariumDashboard() {
     { label: "Logs today", value: 0, icon: "📋" },
   ]);
   const [showModal, setShowModal] = useState(false);
+  const [showCreateUnitForm, setShowCreateUnitForm] = useState(false);
   const [selectedUnit, setSelectedUnit] = useState(null);
+  const [editUnit, setEditUnit] = useState(null);
 
   // Fetch units on mount
   useEffect(() => {
@@ -99,6 +102,42 @@ export default function AquariumDashboard() {
     ]);
   }, [units]);
 
+  const handleUnitSaved = async (savedUnit) => {
+    console.log("Unit saved:", savedUnit);
+    setShowCreateUnitForm(false);
+    setEditUnit(null);
+    setSelectedUnit(null);
+    // Refresh units list
+    const data = await getFiltratieUnits();
+    setUnits(data || []);
+  };
+
+  const handleEditUnit = (unit) => {
+    setEditUnit(unit);
+    setShowCreateUnitForm(true);
+    setSelectedUnit(null);
+  };
+
+  const handleDeleteUnit = async (unitId) => {
+    const success = await deleteFiltratieUnit(unitId);
+    if (success) {
+      console.log("Unit deleted successfully");
+      setSelectedUnit(null);
+      // Refresh units list
+      const data = await getFiltratieUnits();
+      setUnits(data || []);
+    } else {
+      alert("Fout bij het verwijderen van de unit");
+    }
+  };
+
+  const handleCancelForm = () => {
+    setShowCreateUnitForm(false);
+    setEditUnit(null);
+  };
+
+  const isAdmin = auth?.user?.rol === "admin";
+
   return (
     <>
       <div className="dash-root">
@@ -108,9 +147,11 @@ export default function AquariumDashboard() {
             <h1>Welcome, {user?.naam}</h1>
             <p>Here's the state of the park's life support today.</p>
           </div>
-          <button className="btn-log" onClick={() => setShowModal(true)}>
-            + Log entry
-          </button>
+          {isAdmin && (
+            <button className="btn-log" onClick={() => setShowCreateUnitForm(true)}>
+              + Nieuwe Filtratie Unit
+            </button>
+          )}
         </div>
 
         {/* ── Stats ── */}
@@ -159,7 +200,19 @@ export default function AquariumDashboard() {
         unit={selectedUnit}
         onClose={() => setSelectedUnit(null)}
         onViewDetails={(unit) => navigate(`/units/${unit.id}`)}
+        onDelete={handleDeleteUnit}
+        onEdit={handleEditUnit}
+        isAdmin={isAdmin}
       />
+
+      {/* ── Create/Edit filtratie unit form ── */}
+      {showCreateUnitForm && isAdmin && (
+        <CreateFiltratieUnitForm
+          onSuccess={handleUnitSaved}
+          onCancel={handleCancelForm}
+          editUnit={editUnit}
+        />
+      )}
     </>
   );
 }

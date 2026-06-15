@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import "../css/Admin.css";
 import UserCard from "../components/Admin/UserCard";
 import { getGebruikers } from "../api/gebruiker/api.gebruiker.ts";
+
 function Admin() {
   const [users, setUsers] = useState([]);
 

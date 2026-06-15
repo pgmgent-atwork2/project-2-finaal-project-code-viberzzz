@@ -5,9 +5,11 @@ import OverdueTasks from "../components/Planning/OverdueTasks";
 import UpdateOnderhoudModal from "../components/Planning/UpdateOnderhoudModal";
 import NewPlanningEntry from "../components/Planning/NewPlanningEntry";
 import { getOnderhoudItems, updateOnderhoudStatus } from "../api/onderhoud/api.onderhoud.ts";
+import { useAuth } from "../context/auth";
 import "../css/Planning.css";
 
 const Planning = () => {
+  const { auth } = useAuth();
   const [items, setItems] = useState([]);
   const [filters, setFilters] = useState({
     search: "",
@@ -182,7 +184,10 @@ const Planning = () => {
         />
       )}
 
-      <NewPlanningEntry onEntryCreated={handleEntryCreated} />
+      <NewPlanningEntry 
+        onEntryCreated={handleEntryCreated} 
+        isVisible={auth?.user?.rol === "supervisor" || auth?.user?.rol === "admin"}
+      />
     </main>
   );
 };
