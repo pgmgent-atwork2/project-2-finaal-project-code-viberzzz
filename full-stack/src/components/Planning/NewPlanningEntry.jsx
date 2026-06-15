@@ -3,7 +3,7 @@ import { createOnderhoud } from "../../api/onderhoud/api.onderhoud.ts";
 import { API } from "../../lib/supabaseClient";
 import "../../css/NewPlanningEntry.css";
 
-const NewPlanningEntry = ({ onEntryCreated = () => {} }) => {
+const NewPlanningEntry = ({ onEntryCreated = () => {}, isVisible = true }) => {
   const [formData, setFormData] = useState({
     unit_id: "",
     toegewezen_aan: "",
@@ -95,6 +95,10 @@ const NewPlanningEntry = ({ onEntryCreated = () => {} }) => {
       setIsLoading(false);
     }
   };
+
+  if (!isVisible) {
+    return null;
+  }
 
   return (
     <section className="new-planning-entry">

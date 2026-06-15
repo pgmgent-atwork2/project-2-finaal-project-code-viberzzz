@@ -103,16 +103,26 @@ export default function SeaparkNav() {
 
         {/* Nav items */}
         <div className="sp-nav-list">
-          {navItems.map(({ label, path, icon }) => (
-            <Link
-              key={label}
-              to={path}
-              className={`sp-nav-item${location.pathname === path ? " active" : ""}`}
-            >
-              {icon}
-              {label}
-            </Link>
-          ))}
+          {navItems.map(({ label, path, icon }) => {
+            // Hide Reports link for non-supervisor/admin users
+            if (label === "Reports" && user?.rol !== "supervisor" && user?.rol !== "admin") {
+              return null;
+            }
+            // Hide Admin link for non-admin users
+            if (label === "Admin" && user?.rol !== "admin") {
+              return null;
+            }
+            return (
+              <Link
+                key={label}
+                to={path}
+                className={`sp-nav-item${location.pathname === path ? " active" : ""}`}
+              >
+                {icon}
+                {label}
+              </Link>
+            );
+          })}
         </div>
 
         {/* Footer */}
