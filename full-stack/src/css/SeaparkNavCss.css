@@ -143,3 +143,40 @@
 .sp-signout:hover {
   color: #0b5966;
 }
+
+@media (max-width: 768px) {
+  .sp-nav {
+    width: 100%;
+    min-height: auto;
+    height: 72px;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    z-index: 1000;
+    flex-direction: row;
+    border-right: none;
+    border-top: 1px solid #daeef1;
+  }
+
+  .sp-brand,
+  .sp-footer {
+    display: none;
+  }
+
+  .sp-nav-list {
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    padding: 8px;
+    width: 100%;
+  }
+
+  .sp-nav-item {
+    flex-direction: column;
+    justify-content: center;
+    gap: 3px;
+    padding: 6px;
+    font-size: 11px;
+    text-align: center;
+  }
+}
