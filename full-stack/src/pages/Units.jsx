@@ -7,7 +7,7 @@ import UnitCard from "../components/unit/UnitCard";
 const Home = () => {
   const navigate = useNavigate();
   const { auth } = useAuth();
-  const [setuser] = useState(null);
+  const [user, setUser] = useState(null);
   const [filtratieUnits, setFiltratieUnits] = useState([]);
 
   const fetchFiltratieUnits = async () => {
@@ -22,8 +22,8 @@ const Home = () => {
 
   useEffect(() => {
     fetchFiltratieUnits();
-    setuser(auth?.user);
-  }, [auth, setuser]);
+    setUser(auth?.user);
+  }, [auth, setUser]);
 
   const getUnitStatus = (unit) => {
     if (!unit.latestWaarde) return "inactive";

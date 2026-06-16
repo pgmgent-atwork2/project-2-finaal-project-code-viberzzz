@@ -4,9 +4,9 @@ import { getFiltratieUnits } from "../api/filtratie_unit/api.filtratie_unit.ts";
 import AquariumCard from "../components/unit/AquariumCard";
 
 const Home = () => {
-  const [setuser] = useState(null);
+  const [user, setUser] = useState(null);
   const { auth } = useAuth();
-  const [setFiltratieUnits] = useState([]);
+  const [filtratieUnits, setFiltratieUnits] = useState([]);
 
   useEffect(() => {
     const fetchFiltratieUnits = async () => {
@@ -19,8 +19,8 @@ const Home = () => {
     };
 
     fetchFiltratieUnits();
-    setuser(auth?.user);
-  }, [auth?.user, setFiltratieUnits, setuser]);
+    setUser(auth?.user);
+  }, [auth?.user, setFiltratieUnits, setUser]);
 
   return (
     <>
