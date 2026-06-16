@@ -7,7 +7,7 @@ import UnitCard from "../components/unit/UnitCard";
 const Home = () => {
   const navigate = useNavigate();
   const { auth } = useAuth();
-  const [user, setuser] = useState(null); 
+  const [setuser] = useState(null);
   const [filtratieUnits, setFiltratieUnits] = useState([]);
 
   const fetchFiltratieUnits = async () => {
@@ -22,24 +22,32 @@ const Home = () => {
 
   useEffect(() => {
     fetchFiltratieUnits();
-    setuser(auth?.user)
+    setuser(auth?.user);
   }, [auth]);
 
   const getUnitStatus = (unit) => {
     if (!unit.latestWaarde) return "inactive";
-    
+
     const latest = unit.latestWaarde;
-    const range = Array.isArray(unit.waarden_range) ? unit.waarden_range[0] : unit.waarden_range;
-    
+    const range = Array.isArray(unit.waarden_range)
+      ? unit.waarden_range[0]
+      : unit.waarden_range;
+
     if (!range) return "active";
-    
+
     // Check if any parameter is out of range
     const isOutOfRange =
       (latest.ph && (latest.ph < range.ph_min || latest.ph > range.ph_max)) ||
-      (latest.temperatuur && (latest.temperatuur < range.temperatuur_min || latest.temperatuur > range.temperatuur_max)) ||
-      (latest.water_level && (latest.water_level < range.water_level_min || latest.water_level > range.water_level_max)) ||
-      (latest.zoutgehalte && (latest.zoutgehalte < range.zoutgehalte_min || latest.zoutgehalte > range.zoutgehalte_max));
-    
+      (latest.temperatuur &&
+        (latest.temperatuur < range.temperatuur_min ||
+          latest.temperatuur > range.temperatuur_max)) ||
+      (latest.water_level &&
+        (latest.water_level < range.water_level_min ||
+          latest.water_level > range.water_level_max)) ||
+      (latest.zoutgehalte &&
+        (latest.zoutgehalte < range.zoutgehalte_min ||
+          latest.zoutgehalte > range.zoutgehalte_max));
+
     return isOutOfRange ? "warning" : "active";
   };
 
@@ -47,9 +55,11 @@ const Home = () => {
     <div style={{ padding: "40px" }}>
       <h1>Filtratie Units</h1>
       {auth?.user && (
-        <p style={{ color: "#64748b", marginBottom: "30px" }}>Logged in as: {auth.user.email}</p>
+        <p style={{ color: "#64748b", marginBottom: "30px" }}>
+          Logged in as: {auth.user.email}
+        </p>
       )}
-      
+
       <div className="units-grid">
         {filtratieUnits && filtratieUnits.length > 0 ? (
           filtratieUnits.map((unit) => (

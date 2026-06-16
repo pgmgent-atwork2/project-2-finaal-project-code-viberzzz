@@ -22,7 +22,7 @@ const ReportsHeader = ({ onFilterChange, onExportPdf }) => {
     if (onFilterChange) {
       onFilterChange({ timePeriod, selectedUnit });
     }
-  }, [timePeriod, selectedUnit]); // onFilterChange is now stable (memoized in parent)
+  }, [timePeriod, selectedUnit, onFilterChange]); // onFilterChange is now stable (memoized in parent)
 
   const handleTimePeriodChange = (e) => {
     setTimePeriod(e.target.value);

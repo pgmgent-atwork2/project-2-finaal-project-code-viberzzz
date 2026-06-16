@@ -41,7 +41,7 @@ const RecentLogsTable = ({ filters, onLogsFiltered }) => {
     if (onLogsFiltered) {
       onLogsFiltered(filtered);
     }
-  }, [logs, filters]);
+  }, [logs, filters, onLogsFiltered]);
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);

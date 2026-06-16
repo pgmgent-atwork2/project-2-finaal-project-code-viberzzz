@@ -1,6 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
-import SeaparkNavCss from "../css/SeaparkNavCss.css";
 import { logout } from "../api/authApi";
+import "../css/SeaparkNavCss.css";
 
 import { useAuth } from "../context/auth";
 import { useEffect, useState } from "react";
