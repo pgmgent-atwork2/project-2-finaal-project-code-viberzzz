@@ -4,7 +4,10 @@ import UpcomingMaintenance from "../components/Planning/UpcomingMaintenance";
 import OverdueTasks from "../components/Planning/OverdueTasks";
 import UpdateOnderhoudModal from "../components/Planning/UpdateOnderhoudModal";
 import NewPlanningEntry from "../components/Planning/NewPlanningEntry";
-import { getOnderhoudItems, updateOnderhoudStatus } from "../api/onderhoud/api.onderhoud.ts";
+import {
+  getOnderhoudItems,
+  updateOnderhoudStatus,
+} from "../api/onderhoud/api.onderhoud.ts";
 import { useAuth } from "../context/auth";
 import "../css/Planning.css";
 
@@ -31,7 +34,12 @@ const Planning = () => {
   const stats = useMemo(() => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    const counts = { total: items.length, pending: 0, overdue: 0, completed: 0 };
+    const counts = {
+      total: items.length,
+      pending: 0,
+      overdue: 0,
+      completed: 0,
+    };
 
     items.forEach((item) => {
       if (item.status === "voltooid") {
@@ -78,7 +86,9 @@ const Planning = () => {
   const handleUpdateStatus = async (id, newStatus) => {
     await updateOnderhoudStatus(id, newStatus);
     setItems((prev) =>
-      prev.map((item) => (item.id === id ? { ...item, status: newStatus } : item)),
+      prev.map((item) =>
+        item.id === id ? { ...item, status: newStatus } : item,
+      ),
     );
   };
 
@@ -91,7 +101,10 @@ const Planning = () => {
     <main className="planning-page">
       <header>
         <h1>Maintenance Planning</h1>
-        <p>Schedule, dispatch and track maintenance for all filtration installations.</p>
+        <p>
+          Schedule, dispatch and track maintenance for all filtration
+          installations.
+        </p>
       </header>
 
       <section aria-label="Task statistics">
@@ -126,11 +139,12 @@ const Planning = () => {
           aria-label="Search tasks"
         />
         <fieldset className="filters-row">
-          <legend className="sr-only">Filter tasks</legend>
           <select
             id="filter-technician"
             value={filters.technician}
-            onChange={(e) => setFilters({ ...filters, technician: e.target.value })}
+            onChange={(e) =>
+              setFilters({ ...filters, technician: e.target.value })
+            }
             aria-label="Technician"
           >
             <option value="">All technicians</option>
@@ -144,7 +158,9 @@ const Planning = () => {
           <select
             id="filter-installation"
             value={filters.installation}
-            onChange={(e) => setFilters({ ...filters, installation: e.target.value })}
+            onChange={(e) =>
+              setFilters({ ...filters, installation: e.target.value })
+            }
             aria-label="Installation"
           >
             <option value="">All installations</option>
@@ -169,24 +185,47 @@ const Planning = () => {
         </fieldset>
       </section>
 
-      <Calendar items={filteredItems} onItemClick={(item) => { setSelectedItem(item); setShowModal(true); }} />
+      <Calendar
+        items={filteredItems}
+        onItemClick={(item) => {
+          setSelectedItem(item);
+          setShowModal(true);
+        }}
+      />
 
       <div className="maintenance-overview">
-        <UpcomingMaintenance items={filteredItems} onItemClick={(item) => { setSelectedItem(item); setShowModal(true); }} />
-        <OverdueTasks items={filteredItems} onItemClick={(item) => { setSelectedItem(item); setShowModal(true); }} />
+        <UpcomingMaintenance
+          items={filteredItems}
+          onItemClick={(item) => {
+            setSelectedItem(item);
+            setShowModal(true);
+          }}
+        />
+        <OverdueTasks
+          items={filteredItems}
+          onItemClick={(item) => {
+            setSelectedItem(item);
+            setShowModal(true);
+          }}
+        />
       </div>
 
       {showModal && (
         <UpdateOnderhoudModal
           item={selectedItem}
-          onClose={() => { setShowModal(false); setSelectedItem(null); }}
+          onClose={() => {
+            setShowModal(false);
+            setSelectedItem(null);
+          }}
           onUpdate={handleUpdateStatus}
         />
       )}
 
-      <NewPlanningEntry 
-        onEntryCreated={handleEntryCreated} 
-        isVisible={auth?.user?.rol === "supervisor" || auth?.user?.rol === "admin"}
+      <NewPlanningEntry
+        onEntryCreated={handleEntryCreated}
+        isVisible={
+          auth?.user?.rol === "supervisor" || auth?.user?.rol === "admin"
+        }
       />
     </main>
   );
