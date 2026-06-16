@@ -23,7 +23,7 @@ const Home = () => {
   useEffect(() => {
     fetchFiltratieUnits();
     setuser(auth?.user);
-  }, [auth]);
+  }, [auth, setuser]);
 
   const getUnitStatus = (unit) => {
     if (!unit.latestWaarde) return "inactive";
