@@ -1,0 +1,3 @@
+admin@mail.com          admin123
+technieker@mail.com     technieker
+supervisor@mail.com     supervisor
