@@ -1,11 +1,14 @@
 .planning-page {
   width: 100%;
-  padding: 2rem;
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 2rem 3rem;
+  box-sizing: border-box;
 }
 
 .planning-page h1 {
   font-size: 2rem;
-  margin-bottom: .5rem;
+  margin-bottom: 0.5rem;
 }
 
 .planning-page p {
